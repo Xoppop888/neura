@@ -43,7 +43,7 @@ export function Trust() {
   };
 
   return (
-    <section className="py-32 md:py-48 px-6 relative">
+    <section className="py-20 md:py-32 px-6 relative">
       <div className="absolute inset-0 mesh-gradient opacity-50" />
       <div className="max-w-6xl mx-auto relative z-10">
         <AnimatedSection>
@@ -52,7 +52,7 @@ export function Trust() {
             <span className="gradient-text-blue">Intelligence.</span>
           </h2>
           <p className="text-lg md:text-xl text-[#737373] max-w-2xl leading-relaxed mb-16 font-light">
-            Создаём цифровые продукты, которые выглядят премиально, работают быстро и решают реальные задачи бизнеса.
+            We create digital products that look premium, work fast, and solve real business problems.
           </p>
           <div className="flex flex-wrap gap-3">
             {traits.map((trait, i) => (
@@ -124,28 +124,28 @@ export function Services() {
     {
       num: '01',
       title: 'Premium Websites',
-      desc: 'Маркетинговые сайты, лендинги и корпоративные платформы с сильным дизайном, UX и высокой скоростью.',
+      desc: 'Marketing sites, landing pages, and corporate platforms with strong design, UX, and high performance.',
       icon: Globe,
       glow: 'violet',
     },
     {
       num: '02',
       title: 'AI Agents',
-      desc: 'AI-боты и интеллектуальные ассистенты для продаж, поддержки, консультаций и внутренних процессов.',
+      desc: 'AI bots and intelligent assistants for sales, support, consulting, and internal processes.',
       icon: Bot,
       glow: 'cyan',
     },
     {
       num: '03',
       title: 'AI Automation',
-      desc: 'Автоматизация повторяющихся задач и бизнес-процессов с помощью AI.',
+      desc: 'Automation of repetitive tasks and business processes powered by AI.',
       icon: Zap,
       glow: 'blue',
     },
     {
       num: '04',
       title: 'Custom Products',
-      desc: 'Веб-приложения, внутренние инструменты, MVP и нестандартные цифровые продукты.',
+      desc: 'Web applications, internal tools, MVPs, and custom digital solutions.',
       icon: Code2,
       glow: 'violet',
     },
@@ -164,7 +164,7 @@ export function Services() {
   };
 
   return (
-    <section id="services" className="py-32 md:py-48 px-6">
+    <section id="services" className="py-20 md:py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <AnimatedSection>
           <div className="mb-20">
@@ -173,7 +173,7 @@ export function Services() {
               What we build.
             </h2>
             <p className="text-lg text-[#737373] max-w-xl font-light">
-              От первого прототипа до полноценного цифрового продукта.
+              From first prototype to a full digital product.
             </p>
           </div>
         </AnimatedSection>
@@ -190,10 +190,10 @@ export function Services() {
 
 export function AIFirst() {
   const advantages = [
-    { title: 'Faster iteration', desc: 'Быстрее проверяем идеи и запускаем рабочие версии.', color: 'violet' },
-    { title: 'More experimentation', desc: 'Можем быстро тестировать разные решения и UX-концепции.', color: 'cyan' },
-    { title: 'Lower overhead', desc: 'Меньше лишних процессов между идеей и результатом.', color: 'blue' },
-    { title: 'Human direction', desc: 'AI ускоряет разработку, но продукт, дизайн и решения остаются под контролем человека.', color: 'violet' },
+    { title: 'Faster iteration', desc: 'Validate ideas and ship working versions faster.', color: 'violet' },
+    { title: 'More experimentation', desc: 'Quickly test different solutions and UX concepts.', color: 'cyan' },
+    { title: 'Lower overhead', desc: 'Less friction between idea and result.', color: 'blue' },
+    { title: 'Human direction', desc: 'AI accelerates development, but product, design, and decisions stay in human hands.', color: 'violet' },
   ];
 
   const colorMap: Record<string, string> = {
@@ -203,7 +203,7 @@ export function AIFirst() {
   };
 
   return (
-    <section className="py-32 md:py-48 px-6 relative overflow-hidden">
+    <section className="py-20 md:py-32 px-6 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-600/[0.03] rounded-full blur-[200px]" />
@@ -225,7 +225,7 @@ export function AIFirst() {
 
         <AnimatedSection>
           <p className="text-lg text-[#737373] max-w-2xl mx-auto text-center mb-20 leading-relaxed font-light">
-            Мы используем AI как часть самого процесса разработки — от исследования и прототипирования до интерфейсов, кода, интеграций и оптимизации.
+            We use AI as part of the development process itself — from research and prototyping to interfaces, code, integrations, and optimization.
           </p>
         </AnimatedSection>
 
@@ -266,7 +266,7 @@ export function AIFirst() {
                     AI-assisted development
                   </h4>
                   <p className="text-[#F5F5F5] leading-relaxed font-light">
-                    Используем современные AI-инструменты и vibe coding подход для быстрого прототипирования, разработки и итераций — превращая идеи в работающие продукты значительно быстрее.
+                    We use modern AI tools and a vibe coding approach for rapid prototyping, development, and iteration — turning ideas into working products significantly faster.
                   </p>
                 </div>
               </div>
@@ -296,11 +296,11 @@ export function AIFirst() {
 
 export function Process() {
   const steps = [
-    { num: '01', title: 'DISCOVER', desc: 'Разбираемся в задаче, бизнесе, аудитории и целях.', color: 'violet' },
-    { num: '02', title: 'CONCEPT', desc: 'Формируем концепцию продукта, структуру и визуальное направление.', color: 'cyan' },
-    { num: '03', title: 'BUILD', desc: 'Создаём интерфейс, функциональность и AI-интеграции с использованием AI-first development.', color: 'blue' },
-    { num: '04', title: 'REFINE', desc: 'Тестируем, улучшаем UX, производительность и детали.', color: 'violet' },
-    { num: '05', title: 'LAUNCH', desc: 'Запускаем готовый продукт.', color: 'cyan' },
+    { num: '01', title: 'DISCOVER', desc: 'Understand the problem, business, audience, and goals.', color: 'violet' },
+    { num: '02', title: 'CONCEPT', desc: 'Define product concept, structure, and visual direction.', color: 'cyan' },
+    { num: '03', title: 'BUILD', desc: 'Create interface, functionality, and AI integrations using AI-first development.', color: 'blue' },
+    { num: '04', title: 'REFINE', desc: 'Test, improve UX, performance, and details.', color: 'violet' },
+    { num: '05', title: 'LAUNCH', desc: 'Ship the finished product.', color: 'cyan' },
   ];
 
   const colorMap: Record<string, string> = {
@@ -310,7 +310,7 @@ export function Process() {
   };
 
   return (
-    <section id="process" className="py-32 md:py-48 px-6">
+    <section id="process" className="py-20 md:py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <AnimatedSection>
           <div className="mb-20">
@@ -322,32 +322,31 @@ export function Process() {
         </AnimatedSection>
 
         {/* Timeline */}
-        <div className="relative">
-          {/* Line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-violet-500/20 via-cyan-500/10 to-transparent" />
-          
-          <div className="space-y-12 md:space-y-16">
+        <div className="relative max-w-3xl">
+          <div className="space-y-12">
             {steps.map((step, i) => (
               <motion.div
                 key={step.num}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className={`relative md:flex items-center ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className="relative flex gap-6"
               >
-                {/* Content */}
-                <div className={`md:w-1/2 pl-14 sm:pl-16 ${i % 2 === 0 ? 'md:pr-16 md:text-right md:pl-0' : 'md:pl-16'}`}>
-                  <span className="text-[11px] text-[#737373] tracking-[0.2em] mb-3 block font-mono">{step.num}</span>
-                  <h3 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] mb-3">{step.title}</h3>
-                  <p className="text-[#737373] leading-relaxed font-light">{step.desc}</p>
+                {/* Dot & Line */}
+                <div className="flex flex-col items-center">
+                  <div className={`w-3 h-3 rounded-full border shrink-0 ${colorMap[step.color]}`} />
+                  {i < steps.length - 1 && (
+                    <div className="w-[1px] flex-1 bg-gradient-to-b from-white/[0.08] to-transparent mt-2" />
+                  )}
                 </div>
 
-                {/* Dot */}
-                <div className={`absolute left-6 md:left-1/2 md:-translate-x-1/2 -translate-x-1/2 w-3 h-3 rounded-full border ${colorMap[step.color]}`} />
-
-                {/* Empty space */}
-                <div className="hidden md:block md:w-1/2" />
+                {/* Content */}
+                <div className="pb-2">
+                  <span className="text-[11px] text-[#737373] tracking-[0.2em] mb-2 block font-mono">{step.num}</span>
+                  <h3 className="text-xl md:text-2xl font-semibold tracking-[-0.01em] mb-2">{step.title}</h3>
+                  <p className="text-[#737373] leading-relaxed font-light">{step.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>

@@ -21,40 +21,40 @@ const projects: Project[] = [
     id: 'nova',
     name: 'NOVA',
     category: 'AI-powered customer platform',
-    desc: 'Интеллектуальная платформа для управления клиентским опытом с AI-ассистентом.',
+    desc: 'Intelligent platform for customer experience management with AI assistant.',
     accent: 'violet',
-    challenge: 'Клиенту нужна была платформа, способная обрабатывать тысячи запросов одновременно, сохраняя персонализированный подход к каждому пользователю.',
-    approach: 'Мы создали модульную архитектуру с AI-ядром, которое адаптируется к паттернам поведения пользователей и автоматически оптимизирует ответы.',
-    design: 'Минималистичный интерфейс с акцентом на скорость взаимодействия. Каждая кнопка и элемент продуманы для минимального количества кликов.',
-    technology: 'React, Node.js, PostgreSQL, Redis, WebSocket для real-time обновлений.',
-    ai: 'GPT-4 интеграция для генерации ответов, ML-модель для классификации запросов, система рекомендаций на основе поведения.',
-    result: 'Сокращение времени ответа на 73%. Увеличение удовлетворённости клиентов на 45%. Автоматизация 80% типовых запросов.',
+    challenge: 'The client needed a platform capable of handling thousands of requests simultaneously while maintaining a personalized approach for each user.',
+    approach: 'We built a modular architecture with an AI core that adapts to user behavior patterns and automatically optimizes responses.',
+    design: 'Minimalist interface focused on interaction speed. Every button and element designed for minimal clicks.',
+    technology: 'React, Node.js, PostgreSQL, Redis, WebSocket for real-time updates.',
+    ai: 'GPT-4 integration for response generation, ML model for request classification, behavior-based recommendation system.',
+    result: '73% reduction in response time. 45% increase in customer satisfaction. 80% of routine requests automated.',
   },
   {
     id: 'orbit',
     name: 'ORBIT',
     category: 'Premium SaaS website',
-    desc: 'Премиальный маркетинговый сайт для SaaS-продукта с высокой конверсией.',
+    desc: 'Premium marketing website for a SaaS product with high conversion.',
     accent: 'cyan',
-    challenge: 'Создать сайт, который передаёт технологическую экспертизу продукта и конвертирует посетителей в клиентов.',
-    approach: 'Глубокое исследование аудитории, создание уникальной визуальной системы и контент-стратегии, ориентированной на ценности.',
-    design: 'Тёмная тема с акцентными градиентами, плавные анимации при скролле, интерактивные элементы, демонстрирующие продукт.',
-    technology: 'Next.js, Framer Motion, Tailwind CSS, Vercel для деплоя.',
-    ai: 'AI-генерация контента для A/B тестирования, динамическая персонализация лендинга на основе сегмента посетителя.',
-    result: 'Конверсия увеличена на 120%. Время загрузки — 0.8s. Core Web Vitals в зелёной зоне.',
+    challenge: 'Create a website that communicates the technical expertise of the product and converts visitors into customers.',
+    approach: 'Deep audience research, unique visual system creation, and value-oriented content strategy.',
+    design: 'Dark theme with accent gradients, smooth scroll animations, interactive elements showcasing the product.',
+    technology: 'Next.js, Framer Motion, Tailwind CSS, deployed on Vercel.',
+    ai: 'AI content generation for A/B testing, dynamic landing page personalization based on visitor segment.',
+    result: '120% conversion increase. 0.8s load time. Core Web Vitals in green zone.',
   },
   {
     id: 'atlas',
     name: 'ATLAS',
     category: 'AI business assistant',
-    desc: 'Внутренний AI-ассистент для автоматизации операционных задач компании.',
+    desc: 'Internal AI assistant for automating company operational tasks.',
     accent: 'blue',
-    challenge: 'Компания тратила более 40 часов в неделю на рутинные задачи: обработка документов, ответы на FAQ, координация между отделами.',
-    approach: 'Создание единого AI-ассистента, интегрированного во внутренние системы компании с доступом к базам знаний.',
-    design: 'Чат-интерфейс с контекстными подсказками, быстрый доступ к функциям через команды, минимальный визуальный шум.',
-    technology: 'Python, FastAPI, LangChain, Pinecone для vector search, React для интерфейса.',
-    ai: 'RAG-система с доступом к внутренним документам, автоматическая классификация задач, интеграция с Slack и email.',
-    result: 'Экономия 35+ часов в неделю. Сокращение времени на поиск информации на 60%. Автоматизация 85% рутинных процессов.',
+    challenge: 'The company spent 40+ hours per week on routine tasks: document processing, FAQ responses, inter-department coordination.',
+    approach: 'Created a unified AI assistant integrated into internal company systems with access to knowledge bases.',
+    design: 'Chat interface with contextual hints, quick command-based access to functions, minimal visual noise.',
+    technology: 'Python, FastAPI, LangChain, Pinecone for vector search, React for the interface.',
+    ai: 'RAG system with access to internal documents, automatic task classification, Slack and email integration.',
+    result: '35+ hours saved per week. 60% reduction in information search time. 85% of routine processes automated.',
   },
 ];
 
@@ -149,13 +149,13 @@ export default function Portfolio() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
-    <section id="work" className="py-32 md:py-48 px-6">
+    <section id="work" className="py-20 md:py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-20"
+          className="mb-16"
         >
           <span className="text-[11px] tracking-[0.3em] uppercase text-violet-400/60 mb-4 block">Portfolio</span>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] mb-6 leading-[0.9]">
@@ -173,42 +173,42 @@ export default function Portfolio() {
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.1 }}
                 onClick={() => setSelectedProject(project)}
-                className={`group cursor-pointer relative rounded-3xl border border-white/[0.06] bg-[#0A0A0A] overflow-hidden transition-all duration-700 hover:${style.border} hover:${style.glow}`}
+                className={`group cursor-pointer relative rounded-2xl border border-white/[0.06] bg-[#0A0A0A] overflow-hidden transition-all duration-700 hover:${style.border} hover:${style.glow}`}
               >
                 {/* Gradient overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${style.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
                 
-                <div className="relative z-10 p-8 md:p-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                   <div className="flex-1">
-                    <span className={`text-[11px] tracking-[0.3em] uppercase ${style.text} mb-4 block font-medium`}>
+                    <span className={`text-[11px] tracking-[0.3em] uppercase ${style.text} mb-3 block font-medium`}>
                       {project.category}
                     </span>
-                    <h3 className="text-4xl md:text-6xl font-bold tracking-[-0.03em] mb-4 transition-all duration-500">
+                    <h3 className="text-3xl md:text-5xl font-bold tracking-[-0.03em] mb-3 transition-all duration-500">
                       {project.name}
                     </h3>
                     <p className="text-[#737373] max-w-lg font-light">{project.desc}</p>
                   </div>
                   
                   {/* Visual mockup */}
-                  <div className="hidden md:block w-56 h-36 rounded-xl border border-white/[0.06] bg-[#050505] overflow-hidden relative group-hover:scale-[1.02] group-hover:border-white/[0.1] transition-all duration-700">
-                    <div className="absolute inset-0 flex flex-col p-4">
-                      <div className="flex gap-1.5 mb-3">
-                        <div className="w-2 h-2 rounded-full bg-white/[0.06]" />
-                        <div className="w-2 h-2 rounded-full bg-white/[0.06]" />
-                        <div className="w-2 h-2 rounded-full bg-white/[0.06]" />
+                  <div className="hidden md:block w-48 h-28 rounded-xl border border-white/[0.06] bg-[#050505] overflow-hidden relative group-hover:scale-[1.02] group-hover:border-white/[0.1] transition-all duration-700 shrink-0">
+                    <div className="absolute inset-0 flex flex-col p-3">
+                      <div className="flex gap-1.5 mb-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/[0.06]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/[0.06]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/[0.06]" />
                       </div>
-                      <div className="flex-1 space-y-2">
-                        <div className={`w-3/4 h-2 rounded bg-gradient-to-r ${style.gradient}`} />
-                        <div className="w-1/2 h-2 bg-white/[0.04] rounded" />
-                        <div className="w-2/3 h-2 bg-white/[0.03] rounded" />
-                        <div className="mt-4 flex gap-2">
-                          <div className={`w-12 h-5 rounded bg-gradient-to-r ${style.gradient}`} />
-                          <div className="w-12 h-5 rounded bg-white/[0.04]" />
+                      <div className="flex-1 space-y-1.5">
+                        <div className={`w-3/4 h-1.5 rounded bg-gradient-to-r ${style.gradient}`} />
+                        <div className="w-1/2 h-1.5 bg-white/[0.04] rounded" />
+                        <div className="w-2/3 h-1.5 bg-white/[0.03] rounded" />
+                        <div className="mt-3 flex gap-2">
+                          <div className={`w-10 h-3.5 rounded bg-gradient-to-r ${style.gradient}`} />
+                          <div className="w-10 h-3.5 rounded bg-white/[0.04]" />
                         </div>
                       </div>
                     </div>

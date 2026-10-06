@@ -4,10 +4,10 @@ import { Send } from 'lucide-react';
 
 function AIDemo() {
   const messages = [
-    { role: 'user', text: 'Мне нужно забронировать консультацию.' },
-    { role: 'ai', text: 'Конечно. Я могу подобрать свободное время и записать вас. Какой день вам удобнее?' },
-    { role: 'user', text: 'Завтра, после обеда.' },
-    { role: 'ai', text: 'Есть свободные слоты на 14:00 и 16:30. Какой вам подходит?' },
+    { role: 'user', text: 'I need to book a consultation.' },
+    { role: 'ai', text: 'Sure. I can find available times and schedule you. Which day works best?' },
+    { role: 'user', text: 'Tomorrow, after noon.' },
+    { role: 'ai', text: 'I have slots at 2:00 PM and 4:30 PM. Which one do you prefer?' },
   ];
 
   const [visibleMessages, setVisibleMessages] = useState(0);
@@ -42,7 +42,7 @@ function AIDemo() {
   ];
 
   return (
-    <section className="py-32 md:py-48 px-6 relative overflow-hidden">
+    <section className="py-20 md:py-32 px-6 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-cyan-500/[0.03] rounded-full blur-[200px]" />
@@ -141,10 +141,10 @@ function AIDemo() {
 
 function WhyUs() {
   const benefits = [
-    { title: 'Speed', desc: 'Быстрые итерации и запуск.', color: 'violet' },
-    { title: 'Design', desc: 'Сильный визуальный и UX-фокус.', color: 'cyan' },
-    { title: 'Flexibility', desc: 'Можно быстро менять направление продукта.', color: 'blue' },
-    { title: 'AI-native', desc: 'AI встроен в процесс разработки с самого начала.', color: 'violet' },
+    { title: 'Speed', desc: 'Fast iterations and quick launches.', color: 'violet' },
+    { title: 'Design', desc: 'Strong visual and UX focus.', color: 'cyan' },
+    { title: 'Flexibility', desc: 'Pivot product direction quickly.', color: 'blue' },
+    { title: 'AI-native', desc: 'AI is built into development from day one.', color: 'violet' },
   ];
 
   const colorMap: Record<string, string> = {
@@ -154,13 +154,13 @@ function WhyUs() {
   };
 
   return (
-    <section className="py-32 md:py-48 px-6">
+    <section className="py-20 md:py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-20"
+          className="mb-16"
         >
           <span className="text-[11px] tracking-[0.3em] uppercase text-violet-400/60 mb-4 block">Why us</span>
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] mb-10 leading-[0.9]">
@@ -207,7 +207,7 @@ function About() {
   };
 
   return (
-    <section id="about" className="py-32 md:py-48 px-6 relative">
+    <section id="about" className="py-20 md:py-32 px-6 relative">
       <div className="absolute inset-0 mesh-gradient opacity-30" />
       
       <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -226,7 +226,7 @@ function About() {
             <span className="gradient-text-blue">Big digital ambition.</span>
           </h2>
           <p className="text-lg md:text-xl text-[#737373] leading-relaxed max-w-2xl mx-auto mb-14 font-light">
-            Мы создаём сайты, AI-продукты и автоматизацию для компаний, которые хотят использовать современные технологии не ради тренда, а ради реального результата.
+            We build websites, AI products, and automation for companies that want to use modern technology for real results — not just trends.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {tags.map((tag, i) => (
@@ -250,7 +250,7 @@ function About() {
 
 function FinalCTA() {
   return (
-    <section className="py-32 md:py-48 px-6 relative overflow-hidden">
+    <section className="py-20 md:py-32 px-6 relative overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-violet-600/[0.04] rounded-full blur-[250px]" />
         <div className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-cyan-500/[0.03] rounded-full blur-[200px]" />
@@ -267,7 +267,7 @@ function FinalCTA() {
             <span className="gradient-text">Let's build it.</span>
           </h2>
           <p className="text-lg md:text-xl text-[#737373] max-w-xl mx-auto mb-14 font-light">
-            Расскажите, что хотите создать. Мы поможем превратить идею в работающий цифровой продукт.
+            Tell us what you want to build. We'll help turn your idea into a working digital product.
           </p>
           <a
             href="#contact"
@@ -296,7 +296,7 @@ function Contact() {
   const types = ['Website', 'AI Agent', 'Automation', 'Web App', 'Not sure yet'];
 
   return (
-    <section id="contact" className="py-32 md:py-48 px-6">
+    <section id="contact" className="py-20 md:py-32 px-6">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

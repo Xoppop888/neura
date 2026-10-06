@@ -19,10 +19,10 @@ function TechMarquee() {
   ];
 
   return (
-    <div className="py-20 overflow-hidden relative">
+    <div className="py-12 overflow-hidden relative border-y border-white/[0.03]">
       {/* Fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-10" />
+      <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-[#050505] to-transparent z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-[#050505] to-transparent z-10" />
       
       <div className="flex animate-[scroll_40s_linear_infinite] gap-12 whitespace-nowrap">
         {[...technologies, ...technologies, ...technologies].map((tech, i) => (
@@ -48,25 +48,16 @@ function App() {
       {/* Main Content */}
       <main>
         <Hero />
-        <SectionDivider />
         <Trust />
         <TechMarquee />
-        <SectionDivider />
         <Services />
-        <SectionDivider />
         <AIFirst />
-        <SectionDivider />
         <Process />
-        <SectionDivider />
         <Portfolio />
-        <SectionDivider />
         <AIDemo />
-        <SectionDivider />
         <WhyUs />
-        <SectionDivider />
         <About />
         <FinalCTA />
-        <SectionDivider />
         <Contact />
       </main>
       
