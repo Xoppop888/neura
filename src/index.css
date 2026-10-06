@@ -93,3 +93,8 @@
 }
 @media (hover:hover){.cap-list>div:hover{padding-left:18px;background:rgba(201,169,107,.09)}.project:hover .project-visual{transform:rotate(0) translateY(-8px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.header nav{transition:none}.project-visual,.project-copy a svg,.cap-list>div,.cap-list>div svg,.hero-link svg,.header-cta svg{transition:none!important}}
+
+/* Selected Work filter */
+.work-filter{display:flex;gap:6px;margin-top:28px;flex-wrap:wrap}.work-filter button{border:1px solid var(--darkline);background:transparent;color:#655b49;padding:8px 10px;font:9px 'DM Mono',monospace;letter-spacing:.04em;cursor:pointer;transition:background .25s,color .25s,border-color .25s}.work-filter button:hover,.work-filter button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+@media(max-width:850px){.work-filter{margin-top:22px;gap:5px}.work-filter button{padding:8px 9px;font-size:8px}.section-lead>div{min-width:0}}
+@media(prefers-reduced-motion:reduce){.work-filter button{transition:none}}
