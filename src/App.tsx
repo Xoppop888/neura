@@ -7,7 +7,7 @@ import { AIDemo, WhyUs, About, FinalCTA, Contact, Footer } from './components/Bo
 function SectionDivider() {
   return (
     <div className="max-w-7xl mx-auto px-6">
-      <div className="h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <div className="h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
     </div>
   );
 }
@@ -19,11 +19,16 @@ function TechMarquee() {
   ];
 
   return (
-    <div className="py-16 overflow-hidden border-y border-white/[0.04]">
-      <div className="flex animate-[scroll_30s_linear_infinite] gap-8 whitespace-nowrap">
-        {[...technologies, ...technologies].map((tech, i) => (
-          <span key={i} className="text-sm text-[#8A8A8A]/40 tracking-wider uppercase">
+    <div className="py-20 overflow-hidden relative">
+      {/* Fade edges */}
+      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-10" />
+      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-10" />
+      
+      <div className="flex animate-[scroll_40s_linear_infinite] gap-12 whitespace-nowrap">
+        {[...technologies, ...technologies, ...technologies].map((tech, i) => (
+          <span key={i} className="text-sm text-[#737373]/30 tracking-[0.2em] uppercase font-light flex items-center gap-12">
             {tech}
+            <span className="w-1 h-1 rounded-full bg-violet-500/20" />
           </span>
         ))}
       </div>
@@ -33,7 +38,7 @@ function TechMarquee() {
 
 function App() {
   return (
-    <div className="relative min-h-screen bg-[#070707] text-[#F5F5F5]">
+    <div className="relative min-h-screen bg-[#050505] text-[#F5F5F5]">
       {/* Noise overlay */}
       <div className="noise-bg" />
       

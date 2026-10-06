@@ -18,25 +18,31 @@ export default function Navbar() {
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? 'glass border-b border-white/[0.06]' : ''
+          scrolled ? 'glass border-b border-white/[0.04]' : ''
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <a href="#" className="text-lg font-semibold tracking-tight">
-              NEURA<span className="text-[#8A8A8A]">.</span>
+            <a href="#" className="group flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-sm bg-[#050505]" />
+              </div>
+              <span className="text-base font-semibold tracking-tight">
+                NEURA
+              </span>
+              <span className="text-[10px] text-violet-400/60 font-mono tracking-wider">AI</span>
             </a>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-1">
               {links.map((link) => (
                 <a
                   key={link}
                   href={`#${link.toLowerCase()}`}
-                  className="text-sm text-[#8A8A8A] hover:text-[#F5F5F5] transition-colors duration-300"
+                  className="relative text-[13px] text-[#737373] hover:text-[#F5F5F5] transition-colors duration-300 px-4 py-2 animated-underline"
                 >
                   {link}
                 </a>
@@ -47,9 +53,10 @@ export default function Navbar() {
             <div className="hidden md:block">
               <a
                 href="#contact"
-                className="text-sm px-5 py-2.5 rounded-full border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] transition-all duration-300"
+                className="group relative inline-flex items-center gap-2 text-[13px] px-5 py-2.5 rounded-full border border-white/[0.08] hover:border-violet-500/30 hover:bg-violet-500/[0.03] transition-all duration-500"
               >
-                Let's talk <span className="ml-1">→</span>
+                <span className="text-[#F5F5F5]">Let's talk</span>
+                <span className="text-violet-400 transition-transform duration-300 group-hover:translate-x-0.5">→</span>
               </a>
             </div>
 
@@ -69,12 +76,12 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="fixed inset-0 z-40 bg-[#070707] pt-20 px-6 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-[#050505]/98 backdrop-blur-xl pt-24 px-6 md:hidden"
           >
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-8">
               {links.map((link, i) => (
                 <motion.a
                   key={link}
@@ -83,7 +90,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
                   onClick={() => setMobileOpen(false)}
-                  className="text-3xl font-light tracking-tight"
+                  className="text-4xl font-light tracking-tight"
                 >
                   {link}
                 </motion.a>
@@ -94,7 +101,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
                 onClick={() => setMobileOpen(false)}
-                className="text-3xl font-light tracking-tight text-[#8A8A8A]"
+                className="text-4xl font-light tracking-tight text-violet-400"
               >
                 Let's talk →
               </motion.a>

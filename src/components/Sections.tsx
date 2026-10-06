@@ -1,17 +1,26 @@
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, type ReactNode, type MouseEvent } from 'react';
 import { Globe, Bot, Zap, Code2 } from 'lucide-react';
 
-function AnimatedSection({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function useMousePosition() {
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+  return { pos, handleMouseMove };
+}
+
+function AnimatedSection({ children, className = '' }: { children: ReactNode; className?: string }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -20,30 +29,42 @@ function AnimatedSection({ children, className = '' }: { children: React.ReactNo
 }
 
 export function Trust() {
-  const traits = ['AI-first', 'Fast execution', 'Premium UI/UX', 'Custom solutions'];
+  const traits = [
+    { label: 'AI-first', color: 'violet' },
+    { label: 'Fast execution', color: 'cyan' },
+    { label: 'Premium UI/UX', color: 'blue' },
+    { label: 'Custom solutions', color: 'violet' },
+  ];
+
+  const colorMap: Record<string, string> = {
+    violet: 'border-violet-500/20 text-violet-300/80 bg-violet-500/[0.03]',
+    cyan: 'border-cyan-500/20 text-cyan-300/80 bg-cyan-500/[0.03]',
+    blue: 'border-blue-500/20 text-blue-300/80 bg-blue-500/[0.03]',
+  };
 
   return (
-    <section className="py-32 md:py-48 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-32 md:py-48 px-6 relative">
+      <div className="absolute inset-0 mesh-gradient opacity-50" />
+      <div className="max-w-6xl mx-auto relative z-10">
         <AnimatedSection>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.02em] mb-8">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] mb-8 leading-[0.9]">
             Design. Technology.<br />
-            <span className="text-[#8A8A8A]">Intelligence.</span>
+            <span className="gradient-text-blue">Intelligence.</span>
           </h2>
-          <p className="text-lg md:text-xl text-[#8A8A8A] max-w-2xl leading-relaxed mb-16">
+          <p className="text-lg md:text-xl text-[#737373] max-w-2xl leading-relaxed mb-16 font-light">
             Создаём цифровые продукты, которые выглядят премиально, работают быстро и решают реальные задачи бизнеса.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {traits.map((trait, i) => (
               <motion.span
-                key={trait}
+                key={trait.label}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="px-5 py-2.5 rounded-full border border-white/[0.08] text-sm text-[#8A8A8A]"
+                className={`px-5 py-2.5 rounded-full border text-sm ${colorMap[trait.color]}`}
               >
-                {trait}
+                {trait.label}
               </motion.span>
             ))}
           </div>
@@ -53,43 +74,105 @@ export function Trust() {
   );
 }
 
+function ServiceCard({ service, index, glowColors, iconColors }: {
+  service: { num: string; title: string; desc: string; icon: typeof Globe; glow: string };
+  index: number;
+  glowColors: Record<string, string>;
+  iconColors: Record<string, string>;
+}) {
+  const { pos, handleMouseMove } = useMousePosition();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.6 }}
+      onMouseMove={handleMouseMove}
+      className={`group card-neon p-8 md:p-12 rounded-2xl border border-white/[0.06] bg-[#0A0A0A] relative overflow-hidden transition-all duration-500 ${glowColors[service.glow]}`}
+      style={{ '--mouse-x': `${pos.x}px`, '--mouse-y': `${pos.y}px` } as React.CSSProperties}
+    >
+      {/* Mouse tracking glow */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: `radial-gradient(600px circle at ${pos.x}px ${pos.y}px, rgba(139,92,246,0.04), transparent 40%)`,
+        }}
+      />
+      
+      {/* Corner glow */}
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-violet-500/5 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-8">
+          <span className="text-[11px] text-[#737373] tracking-[0.2em] font-mono">{service.num}</span>
+          <service.icon className={`w-5 h-5 transition-all duration-500 ${iconColors[service.glow]}`} strokeWidth={1.5} />
+        </div>
+        <h3 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] mb-4 transition-all duration-500">
+          {service.title}
+        </h3>
+        <p className="text-[#737373] leading-relaxed font-light">
+          {service.desc}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 export function Services() {
   const services = [
     {
       num: '01',
-      title: 'PREMIUM WEBSITES',
+      title: 'Premium Websites',
       desc: 'Маркетинговые сайты, лендинги и корпоративные платформы с сильным дизайном, UX и высокой скоростью.',
       icon: Globe,
+      glow: 'violet',
     },
     {
       num: '02',
-      title: 'AI AGENTS',
+      title: 'AI Agents',
       desc: 'AI-боты и интеллектуальные ассистенты для продаж, поддержки, консультаций и внутренних процессов.',
       icon: Bot,
+      glow: 'cyan',
     },
     {
       num: '03',
-      title: 'AI AUTOMATION',
+      title: 'AI Automation',
       desc: 'Автоматизация повторяющихся задач и бизнес-процессов с помощью AI.',
       icon: Zap,
+      glow: 'blue',
     },
     {
       num: '04',
-      title: 'CUSTOM PRODUCTS',
+      title: 'Custom Products',
       desc: 'Веб-приложения, внутренние инструменты, MVP и нестандартные цифровые продукты.',
       icon: Code2,
+      glow: 'violet',
     },
   ];
+
+  const glowColors: Record<string, string> = {
+    violet: 'group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.3)] group-hover:border-violet-500/20',
+    cyan: 'group-hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)] group-hover:border-cyan-500/20',
+    blue: 'group-hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)] group-hover:border-blue-500/20',
+  };
+
+  const iconColors: Record<string, string> = {
+    violet: 'text-violet-400/60 group-hover:text-violet-400',
+    cyan: 'text-cyan-400/60 group-hover:text-cyan-400',
+    blue: 'text-blue-400/60 group-hover:text-blue-400',
+  };
 
   return (
     <section id="services" className="py-32 md:py-48 px-6">
       <div className="max-w-7xl mx-auto">
         <AnimatedSection>
           <div className="mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.02em] mb-6">
+            <span className="text-[11px] tracking-[0.3em] uppercase text-violet-400/60 mb-4 block">Services</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] mb-6 leading-[0.9]">
               What we build.
             </h2>
-            <p className="text-lg text-[#8A8A8A] max-w-xl">
+            <p className="text-lg text-[#737373] max-w-xl font-light">
               От первого прототипа до полноценного цифрового продукта.
             </p>
           </div>
@@ -97,35 +180,7 @@ export function Services() {
 
         <div className="grid md:grid-cols-2 gap-4">
           {services.map((service, i) => (
-            <motion.div
-              key={service.num}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, duration: 0.6 }}
-              className="group card-hover p-8 md:p-12 rounded-2xl border border-white/[0.06] bg-[#111111] relative overflow-hidden"
-            >
-              {/* Hover gradient */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/[0.02] to-transparent" />
-              
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <span className="text-xs text-[#8A8A8A] tracking-widest">{service.num}</span>
-                  <service.icon className="w-5 h-5 text-[#8A8A8A] group-hover:text-[#F5F5F5] transition-colors duration-500" strokeWidth={1.5} />
-                </div>
-                <h3 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4 group-hover:tracking-[-0.01em] transition-all duration-500">
-                  {service.title}
-                </h3>
-                <p className="text-[#8A8A8A] leading-relaxed">
-                  {service.desc}
-                </p>
-              </div>
-
-              {/* Corner accent */}
-              <div className="absolute top-0 right-0 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-white/20" />
-              </div>
-            </motion.div>
+            <ServiceCard key={service.num} service={service} index={i} glowColors={glowColors} iconColors={iconColors} />
           ))}
         </div>
       </div>
@@ -135,38 +190,47 @@ export function Services() {
 
 export function AIFirst() {
   const advantages = [
-    { title: 'Faster iteration', desc: 'Быстрее проверяем идеи и запускаем рабочие версии.' },
-    { title: 'More experimentation', desc: 'Можем быстро тестировать разные решения и UX-концепции.' },
-    { title: 'Lower overhead', desc: 'Меньше лишних процессов между идеей и результатом.' },
-    { title: 'Human direction', desc: 'AI ускоряет разработку, но продукт, дизайн и решения остаются под контролем человека.' },
+    { title: 'Faster iteration', desc: 'Быстрее проверяем идеи и запускаем рабочие версии.', color: 'violet' },
+    { title: 'More experimentation', desc: 'Можем быстро тестировать разные решения и UX-концепции.', color: 'cyan' },
+    { title: 'Lower overhead', desc: 'Меньше лишних процессов между идеей и результатом.', color: 'blue' },
+    { title: 'Human direction', desc: 'AI ускоряет разработку, но продукт, дизайн и решения остаются под контролем человека.', color: 'violet' },
   ];
 
+  const colorMap: Record<string, string> = {
+    violet: 'bg-violet-500/10 border-violet-500/20',
+    cyan: 'bg-cyan-500/10 border-cyan-500/20',
+    blue: 'bg-blue-500/10 border-blue-500/20',
+  };
+
   return (
-    <section className="py-32 md:py-48 px-6 relative">
-      {/* Background accent */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/[0.01] to-transparent" />
+    <section className="py-32 md:py-48 px-6 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-600/[0.03] rounded-full blur-[200px]" />
+      </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
         <AnimatedSection>
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.02em] mb-8">
+            <span className="text-[11px] tracking-[0.3em] uppercase text-cyan-400/60 mb-6 block">Our approach</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] mb-10 leading-[0.9]">
               Built differently.
             </h2>
-            <p className="text-2xl md:text-4xl font-light text-[#8A8A8A] leading-tight max-w-3xl mx-auto">
+            <p className="text-2xl md:text-4xl font-light text-[#737373] leading-tight max-w-3xl mx-auto">
               AI is not the product.<br />
-              <span className="text-[#F5F5F5]">It's how we build it.</span>
+              <span className="gradient-text-blue">It's how we build it.</span>
             </p>
           </div>
         </AnimatedSection>
 
         <AnimatedSection>
-          <p className="text-lg text-[#8A8A8A] max-w-2xl mx-auto text-center mb-20 leading-relaxed">
+          <p className="text-lg text-[#737373] max-w-2xl mx-auto text-center mb-20 leading-relaxed font-light">
             Мы используем AI как часть самого процесса разработки — от исследования и прототипирования до интерфейсов, кода, интеграций и оптимизации.
           </p>
         </AnimatedSection>
 
         {/* Advantages grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-24">
           {advantages.map((adv, i) => (
             <motion.div
               key={adv.title}
@@ -174,41 +238,54 @@ export function AIFirst() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="p-6 rounded-xl border border-white/[0.06] bg-[#0D0D0D]"
+              className="group p-6 rounded-xl border border-white/[0.06] bg-[#0A0A0A] hover:border-white/[0.1] transition-all duration-500"
             >
-              <h4 className="text-lg font-medium mb-2">{adv.title}</h4>
-              <p className="text-sm text-[#8A8A8A] leading-relaxed">{adv.desc}</p>
+              <div className={`w-8 h-8 rounded-lg ${colorMap[adv.color]} border flex items-center justify-center mb-4`}>
+                <div className="w-1.5 h-1.5 rounded-full bg-current" />
+              </div>
+              <h4 className="text-base font-medium mb-2">{adv.title}</h4>
+              <p className="text-sm text-[#737373] leading-relaxed font-light">{adv.desc}</p>
             </motion.div>
           ))}
         </div>
 
         {/* Vibe coding block */}
         <AnimatedSection>
-          <div className="max-w-3xl mx-auto p-8 md:p-12 rounded-2xl border border-white/[0.06] bg-[#111111] relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="max-w-3xl mx-auto p-8 md:p-12 rounded-2xl border border-white/[0.06] bg-[#0A0A0A] relative overflow-hidden group hover:border-violet-500/10 transition-all duration-500">
+            {/* Top gradient line */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
             
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-2 h-2 rounded-full bg-green-400/60 mt-2" />
-              <div>
-                <h4 className="text-sm font-mono text-[#8A8A8A] tracking-wider uppercase mb-1">
-                  AI-assisted development
-                </h4>
-                <p className="text-[#F5F5F5] leading-relaxed">
-                  Используем современные AI-инструменты и vibe coding подход для быстрого прототипирования, разработки и итераций — превращая идеи в работающие продукты значительно быстрее.
-                </p>
-              </div>
-            </div>
-
-            {/* Flow visualization */}
-            <div className="mt-8 flex items-center gap-3 flex-wrap">
-              {['Idea', 'AI', 'Code', 'Product'].map((step, i) => (
-                <div key={step} className="flex items-center gap-3">
-                  <span className="px-4 py-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-[#8A8A8A]">
-                    {step}
-                  </span>
-                  {i < 3 && <span className="text-[#8A8A8A] text-xs">→</span>}
+            {/* Background glow */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-violet-500/5 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="relative z-10">
+              <div className="flex items-start gap-4 mb-8">
+                <div className="w-2 h-2 rounded-full bg-green-400/60 mt-2 animate-pulse" />
+                <div>
+                  <h4 className="text-[11px] font-mono text-violet-400/60 tracking-[0.2em] uppercase mb-2">
+                    AI-assisted development
+                  </h4>
+                  <p className="text-[#F5F5F5] leading-relaxed font-light">
+                    Используем современные AI-инструменты и vibe coding подход для быстрого прототипирования, разработки и итераций — превращая идеи в работающие продукты значительно быстрее.
+                  </p>
                 </div>
-              ))}
+              </div>
+
+              {/* Flow visualization */}
+              <div className="mt-8 flex items-center gap-2 flex-wrap">
+                {['Idea', 'AI', 'Code', 'Product'].map((step, i) => (
+                  <div key={step} className="flex items-center gap-2">
+                    <span className={`px-4 py-2 rounded-lg border text-sm font-light ${
+                      i === 1 ? 'bg-violet-500/10 border-violet-500/20 text-violet-300' :
+                      i === 3 ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300' :
+                      'bg-white/[0.02] border-white/[0.06] text-[#737373]'
+                    }`}>
+                      {step}
+                    </span>
+                    {i < 3 && <span className="text-[#737373] text-xs">→</span>}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </AnimatedSection>
@@ -219,19 +296,26 @@ export function AIFirst() {
 
 export function Process() {
   const steps = [
-    { num: '01', title: 'DISCOVER', desc: 'Разбираемся в задаче, бизнесе, аудитории и целях.' },
-    { num: '02', title: 'CONCEPT', desc: 'Формируем концепцию продукта, структуру и визуальное направление.' },
-    { num: '03', title: 'BUILD', desc: 'Создаём интерфейс, функциональность и AI-интеграции с использованием AI-first development.' },
-    { num: '04', title: 'REFINE', desc: 'Тестируем, улучшаем UX, производительность и детали.' },
-    { num: '05', title: 'LAUNCH', desc: 'Запускаем готовый продукт.' },
+    { num: '01', title: 'DISCOVER', desc: 'Разбираемся в задаче, бизнесе, аудитории и целях.', color: 'violet' },
+    { num: '02', title: 'CONCEPT', desc: 'Формируем концепцию продукта, структуру и визуальное направление.', color: 'cyan' },
+    { num: '03', title: 'BUILD', desc: 'Создаём интерфейс, функциональность и AI-интеграции с использованием AI-first development.', color: 'blue' },
+    { num: '04', title: 'REFINE', desc: 'Тестируем, улучшаем UX, производительность и детали.', color: 'violet' },
+    { num: '05', title: 'LAUNCH', desc: 'Запускаем готовый продукт.', color: 'cyan' },
   ];
+
+  const colorMap: Record<string, string> = {
+    violet: 'bg-violet-500/20 border-violet-500/30 shadow-[0_0_10px_rgba(139,92,246,0.2)]',
+    cyan: 'bg-cyan-500/20 border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]',
+    blue: 'bg-blue-500/20 border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]',
+  };
 
   return (
     <section id="process" className="py-32 md:py-48 px-6">
       <div className="max-w-7xl mx-auto">
         <AnimatedSection>
           <div className="mb-20">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-[-0.02em] mb-6">
+            <span className="text-[11px] tracking-[0.3em] uppercase text-blue-400/60 mb-4 block">Process</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[-0.03em] leading-[0.9]">
               From idea to launch.
             </h2>
           </div>
@@ -240,7 +324,7 @@ export function Process() {
         {/* Timeline */}
         <div className="relative">
           {/* Line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-white/[0.06] via-white/[0.04] to-transparent sm:block" />
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-violet-500/20 via-cyan-500/10 to-transparent" />
           
           <div className="space-y-12 md:space-y-16">
             {steps.map((step, i) => (
@@ -253,18 +337,16 @@ export function Process() {
                 className={`relative md:flex items-center ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
               >
                 {/* Content */}
-                <div className={`md:w-1/2 pl-12 sm:pl-16 ${i % 2 === 0 ? 'md:pr-16 md:text-right md:pl-0' : 'md:pl-16 md:pl-16'}`}>
-                  <span className="text-xs text-[#8A8A8A] tracking-widest mb-2 block font-mono">{step.num}</span>
-                  <h3 className="text-2xl md:text-3xl font-semibold tracking-tight mb-3">{step.title}</h3>
-                  <p className="text-[#8A8A8A] leading-relaxed">{step.desc}</p>
+                <div className={`md:w-1/2 pl-14 sm:pl-16 ${i % 2 === 0 ? 'md:pr-16 md:text-right md:pl-0' : 'md:pl-16'}`}>
+                  <span className="text-[11px] text-[#737373] tracking-[0.2em] mb-3 block font-mono">{step.num}</span>
+                  <h3 className="text-2xl md:text-3xl font-semibold tracking-[-0.01em] mb-3">{step.title}</h3>
+                  <p className="text-[#737373] leading-relaxed font-light">{step.desc}</p>
                 </div>
 
                 {/* Dot */}
-                <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-[#070707] border border-white/[0.15] hidden sm:block">
-                  <div className="absolute inset-0 rounded-full bg-white/[0.05] animate-pulse" />
-                </div>
+                <div className={`absolute left-6 md:left-1/2 md:-translate-x-1/2 -translate-x-1/2 w-3 h-3 rounded-full border ${colorMap[step.color]}`} />
 
-                {/* Empty space for other side */}
+                {/* Empty space */}
                 <div className="hidden md:block md:w-1/2" />
               </motion.div>
             ))}
