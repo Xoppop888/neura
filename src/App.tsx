@@ -1,70 +1,22 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import { Trust, Services, AIFirst, Process } from './components/Sections';
-import Portfolio from './components/Portfolio';
-import { AIDemo, WhyUs, About, FinalCTA, Contact, Footer } from './components/BottomSections';
+import { useState } from 'react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-function SectionDivider() {
-  return (
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
-    </div>
-  );
-}
+type Lang = 'en' | 'ru' | 'zh';
+const text = {
+  en: { nav:['Work','Studio','Capabilities','Contact'], kicker:'Independent digital studio', title:'Digital products\nwith a point of view.', lead:'We shape identities, interfaces and intelligent systems for the companies defining what comes next.', cta:'Begin a conversation', scroll:'Selected work', work:'Selected work', workIntro:'A considered selection of directions, systems and experiences — each shaped around a distinct idea, with nothing added for decoration.', projects:[['01','BINHAI AUTO / China → Russia','A digital route for choosing, checking and delivering vehicles across borders.','BINHAI'],['02','ORBIT / The pull of a good product','A digital experience composed around clarity, rhythm and trust.','ORBIT'],['03','ATLAS / Knowledge, brought into focus','An internal language for the knowledge and actions already inside a business.','ATLAS']], studio:'NEURA is an independent studio for ambitious digital products.', studioBody:'We bring strategy, design and technology into one focused process. AI helps us explore further and move faster. Taste decides what stays.', capabilities:['Digital identities','Product websites','Intelligent interfaces','Systems & automation'], facts:['Design-led development','AI-assisted workflow','Independent studio','Global collaboration'], contactTitle:'Have a product\nin mind?', contactBody:'Tell us what you are building. We will come back with a point of view, not a sales script.', name:'Your name', email:'Email address', message:'A few words about the project', send:'Send inquiry', footer:'Independent digital studio.', back:'Back to top ↑' },
+  ru: { nav:['Работы','Студия','Возможности','Контакты'], kicker:'Независимая digital-студия', title:'Цифровые продукты\nс собственным характером.', lead:'Мы создаём айдентику, интерфейсы и интеллектуальные системы для компаний, которые определяют будущее.', cta:'Начать разговор', scroll:'Избранные работы', work:'Избранные работы', workIntro:'Небольшая подборка направлений, систем и интерфейсов — каждый проект выстроен вокруг собственной идеи, без лишних украшений.', projects:[['01','BINHAI AUTO / Китай → Россия','Цифровой маршрут для выбора, проверки и доставки автомобилей через границы.','BINHAI'],['02','ORBIT / Притяжение хорошего продукта','Цифровой опыт, построенный вокруг ясности, ритма и доверия.','ORBIT'],['03','ATLAS / Знания в фокусе','Внутренний язык для знаний и действий, которые уже живут внутри бизнеса.','ATLAS']], studio:'NEURA — независимая студия для амбициозных цифровых продуктов.', studioBody:'Мы соединяем стратегию, дизайн и технологии в одном сфокусированном процессе. AI помогает исследовать дальше и двигаться быстрее. Вкус решает, что останется.', capabilities:['Цифровые идентичности','Продуктовые сайты','Интеллектуальные интерфейсы','Системы и автоматизация'], facts:['Дизайн в основе разработки','AI-assisted workflow','Независимая студия','Работа с командами по всему миру'], contactTitle:'Есть продукт\nна примете?', contactBody:'Расскажите, что вы создаёте. Мы вернёмся с точкой зрения, а не с готовым скриптом продаж.', name:'Ваше имя', email:'Email', message:'Несколько слов о проекте', send:'Отправить запрос', footer:'Independent digital studio.', back:'Back to top ↑' },
+  zh: { nav:['作品','工作室','能力','联系'], kicker:'独立数字工作室', title:'拥有独特观点的\n数字产品。', lead:'NEURA 为正在定义未来的公司打造品牌、界面与智能系统。', cta:'开始对话', scroll:'精选作品', work:'精选作品', workIntro:'精选的方向、系统与体验——每个项目都围绕清晰的想法展开，不添加任何多余装饰。', projects:[['01','BINHAI AUTO / 中国 → 俄罗斯','串联选车、验车与跨境交付的数字化路径。','BINHAI'],['02','ORBIT / 好产品的引力','围绕清晰、节奏与信任构建的数字体验。','ORBIT'],['03','ATLAS / 让知识清晰可见','为企业内部已有的知识与行动建立一种新的语言。','ATLAS']], studio:'NEURA 是一家专注于打造非凡数字产品的独立工作室。', studioBody:'我们将策略、设计与技术融为一个聚焦的流程。AI 帮助我们探索更远、行动更快，而品味决定最终留下什么。', capabilities:['数字品牌与身份','产品型网站','智能交互界面','系统与自动化'], facts:['设计驱动开发','AI 辅助工作流','独立工作室','全球协作'], contactTitle:'有一个产品\n想法？', contactBody:'告诉我们你正在创造什么。我们会带着清晰的判断回应，而不是一套销售话术。', name:'你的姓名', email:'邮箱', message:'介绍一下你的项目', send:'提交咨询', footer:'独立数字工作室。', back:'返回顶部 ↑' }
+} as const;
+type Copy = typeof text[Lang];
 
-function TechMarquee() {
-  const technologies = [
-    'React', 'Next.js', 'TypeScript', 'Python', 'OpenAI', 'LangChain',
-    'Node.js', 'PostgreSQL', 'Tailwind CSS', 'Framer Motion', 'Vercel', 'Supabase'
-  ];
-
-  return (
-    <div className="py-12 overflow-hidden relative border-y border-white/[0.03]">
-      {/* Fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-[#050505] to-transparent z-10" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-[#050505] to-transparent z-10" />
-      
-      <div className="flex animate-[scroll_40s_linear_infinite] gap-12 whitespace-nowrap">
-        {[...technologies, ...technologies, ...technologies].map((tech, i) => (
-          <span key={i} className="text-sm text-[#737373]/30 tracking-[0.2em] uppercase font-light flex items-center gap-12">
-            {tech}
-            <span className="w-1 h-1 rounded-full bg-violet-500/20" />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <div className="relative min-h-screen bg-[#050505] text-[#F5F5F5]">
-      {/* Noise overlay */}
-      <div className="noise-bg" />
-      
-      {/* Navigation */}
-      <Navbar />
-      
-      {/* Main Content */}
-      <main>
-        <Hero />
-        <Trust />
-        <TechMarquee />
-        <Services />
-        <AIFirst />
-        <Process />
-        <Portfolio />
-        <AIDemo />
-        <WhyUs />
-        <About />
-        <FinalCTA />
-        <Contact />
-      </main>
-      
-      {/* Footer */}
-      <Footer />
-    </div>
-  );
-}
-
+function Logo(){return <a className="wordmark" href="#top"><span className="mark"><i/></span><b>NEURA</b><small>AI</small></a>}
+function ObjectVisual({label}:{label:string}){return <div className="object-visual"><div className="object-meta"><span>NEURA / {label}</span><span>2026</span></div><div className="object-shape"><i/><i/><i/></div><div className="object-grid"/><div className="object-caption">FORM / FUNCTION / INTELLIGENCE</div></div>}
+function ProjectVisual({kind}:{kind:string}){if(kind==='BINHAI')return <div className="project-visual visual-binhai real-case-visual"><div className="project-ui-top"><span>BINHAI AUTO</span><small>REAL CASE / 2026</small></div><img className="binhai-hero-image" src="/images/binhai/hero-car-carrier.png" alt="Автомобили BINHAI AUTO на автовозе"/><div className="binhai-photo-strip"><img src="/images/binhai/chery-tiggo-3x.webp" alt="Chery Tiggo 3X"/><img src="/images/binhai/chevrolet-monza.webp" alt="Chevrolet Monza"/><img src="/images/binhai/chery-tiggo-5x.webp" alt="Chery Tiggo 5x"/></div><div className="binhai-stamp">CHINA → RUSSIA<br/><b>VERIFIED ROUTE</b></div></div>;return <div className={`project-visual visual-${kind.toLowerCase()}`}><div className="project-ui-top"><span>{kind}</span><small>CONCEPT / 2026&nbsp;&nbsp; NEURA SYSTEM / 01</small></div><div className="project-ui-content"><div className="ui-orbit"/><div className="ui-panel"><b>{kind}</b><span>intelligence layer</span><i/></div><div className="ui-line line-a"/><div className="ui-line line-b"/></div></div>}
+function App(){const [lang,setLang]=useState<Lang>('en');const [menu,setMenu]=useState(false);const c:Copy=text[lang];const caseLabel=lang==='zh'?'查看案例':lang==='ru'?'Открыть кейс':'Open case';const directionLabel=lang==='zh'?'查看方向':lang==='ru'?'Смотреть направление':'View direction';return <div className={`site lang-${lang}`} id="top"><header className="header"><Logo/><nav className={menu?'open':''}>{c.nav.map((n,i)=><a key={n} href={['#work','#studio','#capabilities','#contact'][i]} onClick={()=>setMenu(false)}>{n}</a>)}</nav><div className="header-right"><div className="langs">{(['en','ru','zh'] as Lang[]).map(l=><button className={l===lang?'active':''} key={l} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>)}</div><a className="header-cta" href="#contact">{c.cta}<ArrowUpRight size={14}/></a><button className="menu-toggle" onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></div></header>
+<main><section className="hero"><div className="hero-copy"><div className="micro"><span/> {c.kicker}</div><h1>{c.title.split('\n').map((l,i)=><span className={i===1?'serif':''} key={l}>{l}</span>)}</h1><p>{c.lead}</p><a className="hero-link" href="#contact">{c.cta}<ArrowUpRight size={17}/></a></div><motion.div className="hero-object" initial={{opacity:0,scale:.96}} animate={{opacity:1,scale:1}} transition={{duration:1.1,ease:[.16,1,.3,1]}}><ObjectVisual label="01"/></motion.div><div className="hero-bottom"><span>SCROLL / {c.scroll}</span><span>01 — 04</span></div></section>
+<section id="work" className="work-section"><div className="section-lead"><div className="micro">01 / {c.work.toUpperCase()}</div><p>{c.workIntro}</p></div><div className="project-list">{c.projects.map((p,i)=><motion.article className={`project project-${i} project-${p[3].toLowerCase()}`} key={p[0]} initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:'-100px'}} transition={{duration:.7}}><div className="project-copy"><span className="project-number">{p[0]}</span><h2>{p[1]}</h2><p>{p[2]}</p><a href={p[3]==='BINHAI'?'https://binhaiauto.ru/':'#contact'} target={p[3]==='BINHAI'?'_blank':undefined} rel={p[3]==='BINHAI'?'noreferrer':undefined}>{p[3]==='BINHAI'?caseLabel:directionLabel} <ArrowUpRight size={15}/></a></div><ProjectVisual kind={p[3]}/></motion.article>)}</div></section>
+<section id="studio" className="studio-section"><div className="micro">02 / STUDIO</div><div className="studio-grid"><h2>{c.studio}</h2><div><p>{c.studioBody}</p><div className="facts">{c.facts.map((f,i)=><span key={f}><b>0{i+1}</b>{f}</span>)}</div></div></div></section>
+<section id="capabilities" className="capabilities"><div className="micro">03 / CAPABILITIES</div><div className="cap-list">{c.capabilities.map((x,i)=><div key={x}><span>0{i+1}</span><h3>{x}</h3><ArrowUpRight size={20}/></div>)}</div></section>
+<section id="contact" className="contact-section"><div className="micro">04 / CONTACT</div><div className="contact-grid"><h2>{c.contactTitle.split('\n').map(x=><span key={x}>{x}</span>)}</h2><div><p>{c.contactBody}</p><form onSubmit={e=>e.preventDefault()}><input placeholder={c.name}/><input placeholder={c.email} type="email"/><textarea placeholder={c.message} rows={2}/><button>{c.send}<ArrowUpRight size={16}/></button></form></div></div></section></main><footer><Logo/><span>{c.footer}</span><a href="#top">{c.back}</a></footer></div>}
 export default App;
