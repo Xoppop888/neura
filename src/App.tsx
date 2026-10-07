@@ -5,7 +5,7 @@ import { lqip } from './lqip';
 import { BINHAI_URL, CONTACT, Lang, T } from './copy';
 
 const ease = [0.16, 1, 0.3, 1] as const;
-const IMG = { hero: '/images/binhai/hero.webp', tiggo3: '/images/binhai/tiggo3.webp', monza: '/images/binhai/monza.webp', tiggo5: '/images/binhai/tiggo5.webp' };
+const IMG = { site: '/images/binhai/site.webp', tiggo3: '/images/binhai/tiggo3.webp', monza: '/images/binhai/monza.webp', tiggo5: '/images/binhai/tiggo5.webp' };
 type ImgKey = keyof typeof IMG;
 const Arrow = () => <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M3 11 11 3M4.5 3H11v6.5" /></svg>;
 
@@ -116,10 +116,10 @@ function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
 }
 
 function Binhai({ c }: { c: typeof T.en }) {
-  const r = useRef<HTMLElement>(null);
+  const r = useRef<HTMLElement>(null); const [miss, setMiss] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'end start'] });
-  const y0 = useTransform(p, [0, 1], [70, -70]), y1 = useTransform(p, [0, 1], [30, -40]), y2 = useTransform(p, [0, 1], [60, -70]), y3 = useTransform(p, [0, 1], [20, -30]);
-  const cars: [ImgKey, MotionValue<number>, string][] = [['tiggo3', y1, 'Chery Tiggo 3X'], ['monza', y2, 'Chevrolet Monza'], ['tiggo5', y3, 'Chery Tiggo 5X']];
+  const y = useTransform(p, [0, 1], [50, -50]);
+  useEffect(() => { const i = new Image(); i.onerror = () => setMiss(true); i.src = IMG.site; }, []);
   return (
     <article className="case" ref={r}>
       <div className="case-copy">
@@ -127,10 +127,10 @@ function Binhai({ c }: { c: typeof T.en }) {
         <h3>{c.binhai[0]}</h3><p>{c.binhai[1]}</p>
         <a className="link dark" href={BINHAI_URL} target="_blank" rel="noreferrer">{c.open}<Arrow /></a>
       </div>
-      <div className="case-media">
-        <motion.div className="m-main" style={{ y: y0 }}><Img k="hero" alt="BINHAI AUTO" /></motion.div>
-        <div className="m-row">{cars.map(([k, y, a]) => <motion.div key={k} style={{ y }}><Img k={k} alt={a} /></motion.div>)}</div>
-      </div>
+      <motion.a className="frame" style={{ y }} href={BINHAI_URL} target="_blank" rel="noreferrer" aria-label="binhaiauto.ru">
+        <div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div>
+        {miss ? <div className="m-row m-in">{(['tiggo3', 'monza', 'tiggo5'] as ImgKey[]).map(k => <Img key={k} k={k} alt="" />)}</div> : <Img k="site" alt="binhaiauto.ru" />}
+      </motion.a>
     </article>
   );
 }
