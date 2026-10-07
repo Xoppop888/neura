@@ -1,28 +1,228 @@
-import { useEffect, useState } from 'react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, MotionConfig, MotionValue, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
+import Lenis from 'lenis';
+import { lqip } from './lqip';
+import { BINHAI_URL, CONTACT, Lang, T } from './copy';
 
-type Lang = 'en' | 'ru' | 'zh';
-type WorkFilter = 'all' | 'real' | 'concept';
-const text = {
-  en: { nav:['Work','Studio','Capabilities','Contact'], kicker:'Independent digital studio', title:'Digital products\nwith a point of view.', lead:'We shape identities, interfaces and intelligent systems for the companies defining what comes next.', cta:'Begin a conversation', scroll:'Selected work', work:'Selected work', workIntro:'A considered selection of directions, systems and experiences — each shaped around a distinct idea, with nothing added for decoration.', projects:[['01','BINHAI AUTO / China → Russia','A digital route for choosing, checking and delivering vehicles across borders.','BINHAI'],['02','ORBIT / The pull of a good product','A digital experience composed around clarity, rhythm and trust.','ORBIT'],['03','ATLAS / Knowledge, brought into focus','An internal language for the knowledge and actions already inside a business.','ATLAS']], studio:'NEURA is an independent studio for ambitious digital products.', studioBody:'We bring strategy, design and technology into one focused process. AI helps us explore further and move faster. Taste decides what stays.', capabilities:['Digital identities','Product websites','Intelligent interfaces','Systems & automation'], facts:['Design-led development','AI-assisted workflow','Independent studio','Global collaboration'], contactTitle:'Have a product\nin mind?', contactBody:'Tell us what you are building. We will come back with a point of view, not a sales script.', name:'Your name', email:'Email address', message:'A few words about the project', send:'Send inquiry', footer:'Independent digital studio.', back:'Back to top ↑', seoTitle:'NEURA — AI-first digital studio', seoDescription:'NEURA is an independent digital studio creating distinctive identities, websites and intelligent systems for ambitious companies.', seoKeywords:'digital studio, product websites, AI design studio, digital identity' },
-  ru: { nav:['Работы','Студия','Возможности','Контакты'], kicker:'Независимая digital-студия', title:'Цифровые продукты\nс собственным характером.', lead:'Мы создаём айдентику, интерфейсы и интеллектуальные системы для компаний, которые определяют будущее.', cta:'Начать разговор', scroll:'Избранные работы', work:'Избранные работы', workIntro:'Небольшая подборка направлений, систем и интерфейсов — каждый проект выстроен вокруг собственной идеи, без лишних украшений.', projects:[['01','BINHAI AUTO / Китай → Россия','Цифровой маршрут для выбора, проверки и доставки автомобилей через границы.','BINHAI'],['02','ORBIT / Притяжение хорошего продукта','Цифровой опыт, построенный вокруг ясности, ритма и доверия.','ORBIT'],['03','ATLAS / Знания в фокусе','Внутренний язык для знаний и действий, которые уже живут внутри бизнеса.','ATLAS']], studio:'NEURA — независимая студия для амбициозных цифровых продуктов.', studioBody:'Мы соединяем стратегию, дизайн и технологии в одном сфокусированном процессе. AI помогает исследовать дальше и двигаться быстрее. Вкус решает, что останется.', capabilities:['Цифровые идентичности','Продуктовые сайты','Интеллектуальные интерфейсы','Системы и автоматизация'], facts:['Дизайн в основе разработки','AI-assisted workflow','Независимая студия','Работа с командами по всему миру'], contactTitle:'Есть продукт\nна примете?', contactBody:'Расскажите, что вы создаёте. Мы вернёмся с точкой зрения, а не с готовым скриптом продаж.', name:'Ваше имя', email:'Email', message:'Несколько слов о проекте', send:'Отправить запрос', footer:'Независимая digital-студия.', back:'Наверх ↑', seoTitle:'NEURA — независимая digital-студия', seoDescription:'NEURA создаёт выразительные айдентики, сайты и интеллектуальные системы для амбициозных компаний.', seoKeywords:'digital-студия, разработка сайтов, AI-дизайн, цифровая айдентика' },
-  zh: { nav:['作品','工作室','能力','联系'], kicker:'独立数字工作室', title:'拥有独特观点的\n数字产品。', lead:'NEURA 为正在定义未来的公司打造品牌、界面与智能系统。', cta:'开始对话', scroll:'精选作品', work:'精选作品', workIntro:'精选的方向、系统与体验——每个项目都围绕清晰的想法展开，不添加任何多余装饰。', projects:[['01','BINHAI AUTO / 中国 → 俄罗斯','串联选车、验车与跨境交付的数字化路径。','BINHAI'],['02','ORBIT / 好产品的引力','围绕清晰、节奏与信任构建的数字体验。','ORBIT'],['03','ATLAS / 让知识清晰可见','为企业内部已有的知识与行动建立一种新的语言。','ATLAS']], studio:'NEURA 是一家专注于打造非凡数字产品的独立工作室。', studioBody:'我们将策略、设计与技术融为一个聚焦的流程。AI 帮助我们探索更远、行动更快，而品味决定最终留下什么。', capabilities:['数字品牌与身份','产品型网站','智能交互界面','系统与自动化'], facts:['设计驱动开发','AI 辅助工作流','独立工作室','全球协作'], contactTitle:'有一个产品\n想法？', contactBody:'告诉我们你正在创造什么。我们会带着清晰的判断回应，而不是一套销售话术。', name:'你的姓名', email:'邮箱', message:'介绍一下你的项目', send:'提交咨询', footer:'独立数字工作室。', back:'返回顶部 ↑', seoTitle:'NEURA — 独立数字工作室', seoDescription:'NEURA 为具有远见的公司打造独特品牌、产品型网站与智能系统。', seoKeywords:'数字工作室, 产品网站, AI 设计, 数字品牌' }
-} as const;
-type Copy = typeof text[Lang];
+const ease = [0.16, 1, 0.3, 1] as const;
+const IMG = { hero: '/images/binhai/hero.webp', tiggo3: '/images/binhai/tiggo3.webp', monza: '/images/binhai/monza.webp', tiggo5: '/images/binhai/tiggo5.webp' };
+type ImgKey = keyof typeof IMG;
+const Arrow = () => <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M3 11 11 3M4.5 3H11v6.5" /></svg>;
 
-function Logo(){return <a className="wordmark" href="#top"><span className="mark"><i/></span><b>NEURA</b><small>AI</small></a>}
-function ObjectVisual({label}:{label:string}){return <div className="object-visual"><div className="object-meta"><span>NEURA / {label}</span><span>2026</span></div><div className="object-shape"><i/><i/><i/></div><div className="object-grid"/><div className="object-caption">FORM / FUNCTION / INTELLIGENCE</div></div>}
-function ProjectVisual({kind}:{kind:string}){if(kind==='BINHAI')return <div className="project-visual visual-binhai real-case-visual"><div className="project-ui-top"><span>BINHAI AUTO</span><small>REAL CASE / 2026</small></div><img className="binhai-hero-image" src="/images/binhai/hero-car-carrier.png" alt="Автомобили BINHAI AUTO на автовозе" loading="lazy" decoding="async"/><div className="binhai-photo-strip"><img src="/images/binhai/chery-tiggo-3x.webp" alt="Chery Tiggo 3X" loading="lazy" decoding="async"/><img src="/images/binhai/chevrolet-monza.webp" alt="Chevrolet Monza" loading="lazy" decoding="async"/><img src="/images/binhai/chery-tiggo-5x.webp" alt="Chery Tiggo 5x" loading="lazy" decoding="async"/></div><div className="binhai-stamp">CHINA → RUSSIA<br/><b>VERIFIED ROUTE</b></div></div>;return <div className={`project-visual visual-${kind.toLowerCase()}`}><div className="project-ui-top"><span>{kind}</span><small>CONCEPT / 2026&nbsp;&nbsp; NEURA SYSTEM / 01</small></div><div className="project-ui-content"><div className="ui-orbit"/><div className="ui-panel"><b>{kind}</b><span>intelligence layer</span><i/></div><div className="ui-line line-a"/><div className="ui-line line-b"/></div></div>}
-function App(){
-  const [lang,setLang]=useState<Lang>('en'); const [menu,setMenu]=useState(false); const [filter,setFilter]=useState<WorkFilter>('all'); const c:Copy=text[lang];
-  const filterLabels={all:lang==='zh'?'全部':lang==='ru'?'Все':'All',real:lang==='zh'?'真实案例':lang==='ru'?'Реальные кейсы':'Real case',concept:lang==='zh'?'概念方向':lang==='ru'?'Концепты':'Concepts'};
-  const caseLabel=lang==='zh'?'查看案例':lang==='ru'?'Открыть кейс':'Open case'; const directionLabel=lang==='zh'?'查看方向':lang==='ru'?'Смотреть направление':'View direction';
-  const visibleProjects=c.projects.filter(p=>filter==='all'||(filter==='real'?p[3]==='BINHAI':p[3]!=='BINHAI'));
-  useEffect(()=>{document.documentElement.lang=lang;document.title=c.seoTitle;document.querySelector('meta[name="description"]')?.setAttribute('content',c.seoDescription);document.querySelector('meta[name="keywords"]')?.setAttribute('content',c.seoKeywords);document.querySelectorAll('meta[property="og:title"]').forEach(x=>x.setAttribute('content',c.seoTitle));document.querySelectorAll('meta[property="og:description"]').forEach(x=>x.setAttribute('content',c.seoDescription));document.querySelectorAll('meta[name="twitter:title"]').forEach(x=>x.setAttribute('content',c.seoTitle));document.querySelectorAll('meta[name="twitter:description"]').forEach(x=>x.setAttribute('content',c.seoDescription));},[lang,c]);
-  return <div className={`site lang-${lang}`} id="top"><header className="header"><Logo/><AnimatePresence><motion.nav className={menu?'open':''} initial={false} animate={menu?{opacity:1,y:0}:{opacity:0,y:-12}} transition={{duration:.28,ease:[.16,1,.3,1]}}>{c.nav.map((n,i)=><a key={n} href={['#work','#studio','#capabilities','#contact'][i]} onClick={()=>setMenu(false)}>{n}</a>)}</motion.nav></AnimatePresence><div className="header-right"><div className="langs">{(['en','ru','zh'] as Lang[]).map(l=><button className={l===lang?'active':''} key={l} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>)}</div><a className="header-cta" href="#contact">{c.cta}<ArrowUpRight size={14}/></a><button className="menu-toggle" onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></div></header>
-  <AnimatePresence mode="wait"><motion.main key={lang} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} transition={{duration:.38,ease:[.16,1,.3,1]}}><section className="hero"><div className="hero-copy"><div className="micro"><span/> {c.kicker}</div><h1>{c.title.split('\n').map((l,i)=><span className={i===1?'serif':''} key={l}>{l}</span>)}</h1><p>{c.lead}</p><a className="hero-link" href="#contact">{c.cta}<ArrowUpRight size={17}/></a></div><motion.div className="hero-object" initial={{opacity:0,scale:.96}} animate={{opacity:1,scale:1}} transition={{duration:1.1,ease:[.16,1,.3,1]}}><ObjectVisual label="01"/></motion.div><div className="hero-bottom"><span>SCROLL / {c.scroll}</span><span>01 — 04</span></div></section>
-  <section id="work" className="work-section"><div className="section-lead"><div><div className="micro">01 / {c.work.toUpperCase()}</div><div className="work-filter" role="tablist" aria-label={c.work}>{(['all','real','concept'] as WorkFilter[]).map(key=><button key={key} className={filter===key?'active':''} role="tab" aria-selected={filter===key} onClick={()=>setFilter(key)}>{filterLabels[key]}</button>)}</div></div><p>{c.workIntro}</p></div><div className="project-list">{visibleProjects.map((p,i)=><motion.article className={`project project-${i} project-${p[3].toLowerCase()}`} key={p[0]} initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:'-100px'}} transition={{duration:.7,delay:i*.08,ease:[.16,1,.3,1]}}><div className="project-copy"><span className="project-number">{p[0]}</span><h2>{p[1]}</h2><p>{p[2]}</p><a href={p[3]==='BINHAI'?'https://binhaiauto.ru/':'#contact'} target={p[3]==='BINHAI'?'_blank':undefined} rel={p[3]==='BINHAI'?'noreferrer':undefined}>{p[3]==='BINHAI'?caseLabel:directionLabel} <ArrowUpRight size={15}/></a></div><ProjectVisual kind={p[3]}/></motion.article>)}</div></section>
-  <section id="studio" className="studio-section"><div className="micro">02 / STUDIO</div><div className="studio-grid"><h2>{c.studio}</h2><div><p>{c.studioBody}</p><div className="facts">{c.facts.map((f,i)=><span key={f}><b>0{i+1}</b>{f}</span>)}</div></div></div></section><section id="capabilities" className="capabilities"><div className="micro">03 / CAPABILITIES</div><div className="cap-list">{c.capabilities.map((x,i)=><div key={x}><span>0{i+1}</span><h3>{x}</h3><ArrowUpRight size={20}/></div>)}</div></section><section id="contact" className="contact-section"><div className="micro">04 / CONTACT</div><div className="contact-grid"><h2>{c.contactTitle.split('\n').map(x=><span key={x}>{x}</span>)}</h2><div><p>{c.contactBody}</p><form onSubmit={e=>e.preventDefault()}><input placeholder={c.name}/><input placeholder={c.email} type="email"/><textarea placeholder={c.message} rows={2}/><button>{c.send}<ArrowUpRight size={16}/></button></form></div></div></section></motion.main></AnimatePresence><footer><Logo/><span>{c.footer}</span><a href="#top">{c.back}</a></footer></div>
+function Preloader({ done }: { done: () => void }) {
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    const t0 = performance.now(); let got = 0, shown = 0, id = 0;
+    const jobs = Object.values(IMG).map(src => new Promise<void>(r => { const i = new Image(); i.src = src; (i.decode ? i.decode() : Promise.reject()).then(r, r); }));
+    jobs.forEach(j => j.then(() => got++)); const total = jobs.length + 1;
+    document.fonts.ready.then(() => got++);
+    const tick = () => {
+      const el = performance.now() - t0, target = Math.min(got / total, el / 1100);
+      shown += (target - shown) * 0.12; setP(Math.round(shown * 100));
+      if (shown > 0.995 || el > 3500) return done();
+      id = requestAnimationFrame(tick);
+    };
+    id = requestAnimationFrame(tick); return () => cancelAnimationFrame(id);
+  }, []);
+  return (
+    <motion.div className="pre" exit={{ y: '-100%' }} transition={{ duration: 1.1, ease }}>
+      <div className="pre-word">{'NEURA'.split('').map((c, i) => <motion.span key={i} initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1 + i * 0.07, ease }}>{c}</motion.span>)}</div>
+      <div className="pre-bar"><i style={{ transform: `scaleX(${p / 100})` }} /></div>
+      <span className="pre-n">{p}</span>
+    </motion.div>
+  );
 }
-export default App;
+
+function Magnetic({ children }: { children: ReactNode }) {
+  const r = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0), y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 160, damping: 14, mass: 0.2 }), sy = useSpring(y, { stiffness: 160, damping: 14, mass: 0.2 });
+  return <motion.div ref={r} className="mag" style={{ x: sx, y: sy }}
+    onPointerMove={e => { const b = r.current!.getBoundingClientRect(); x.set((e.clientX - b.left - b.width / 2) * 0.28); y.set((e.clientY - b.top - b.height / 2) * 0.28); }}
+    onPointerLeave={() => { x.set(0); y.set(0); }}>{children}</motion.div>;
+}
+
+function Img({ k, alt }: { k: ImgKey; alt: string }) {
+  const [ok, setOk] = useState(false); const r = useRef<HTMLImageElement>(null);
+  useEffect(() => { if (r.current?.complete && r.current.naturalWidth) setOk(true); }, []);
+  return <span className="img" style={{ backgroundImage: `url(${lqip[k]})` }}><img ref={r} src={IMG[k]} alt={alt} decoding="async" className={ok ? 'in' : ''} onLoad={() => setOk(true)} /></span>;
+}
+
+function Emblem() {
+  const x = useMotionValue(0), y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 50, damping: 18 }), sy = useSpring(y, { stiffness: 50, damping: 18 });
+  useEffect(() => {
+    const m = (e: PointerEvent) => { x.set((e.clientX / innerWidth - 0.5) * 36); y.set((e.clientY / innerHeight - 0.5) * 36); };
+    addEventListener('pointermove', m); return () => removeEventListener('pointermove', m);
+  }, []);
+  return (
+    <motion.div className="emblem" style={{ x: sx, y: sy }} aria-hidden>
+      <svg viewBox="-200 -200 400 400">
+        <defs>
+          <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f0dcae" /><stop offset=".55" stopColor="#b89a5e" /><stop offset="1" stopColor="#6b5832" /></linearGradient>
+          <radialGradient id="core"><stop offset="0" stopColor="#f0dcae" /><stop offset=".6" stopColor="#b89a5e" /><stop offset="1" stopColor="#b89a5e" stopOpacity="0" /></radialGradient>
+        </defs>
+        {[0, 1, 2, 3, 4].map(i => {
+          const rx = 192 - i * 34, ry = rx * (0.36 + i * 0.1);
+          return <g key={i} className="ring" style={{ animationDuration: `${46 + i * 20}s`, animationDirection: i % 2 ? 'reverse' : 'normal' }}>
+            <g transform={`rotate(${i * 34})`}><ellipse rx={rx} ry={ry} fill="none" stroke="url(#gold)" strokeWidth={i === 2 ? 1.5 : 0.7} opacity={0.95 - i * 0.13} /><circle cx={rx} r={i === 2 ? 4.5 : 2.6} fill="#f0dcae" /></g>
+          </g>;
+        })}
+        <circle r="56" fill="url(#core)" opacity=".55" /><circle r="17" fill="url(#gold)" />
+      </svg>
+    </motion.div>
+  );
+}
+
+function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) => void; scrolled: boolean }) {
+  const [open, setOpen] = useState(false); const c = T[lang];
+  const ids = ['#work', '#studio', '#process', '#contact'];
+  return (
+    <header className={`hd ${scrolled ? 'solid' : ''} ${open ? 'open' : ''}`}>
+      <a href="#" className="logo" onClick={() => setOpen(false)}><span className="logo-mark" />NEURA</a>
+      <nav>{c.nav.map((n, i) => <a key={n} href={ids[i]} onClick={() => setOpen(false)}>{n}</a>)}</nav>
+      <div className="hd-r">
+        <div className="langs">{(['en', 'ru', 'zh'] as Lang[]).map(l => <button key={l} className={l === lang ? 'on' : ''} onClick={() => setLang(l)}>{l === 'zh' ? '中文' : l.toUpperCase()}</button>)}</div>
+        <button className="burger" aria-label="Menu" onClick={() => setOpen(!open)}><i /><i /></button>
+      </div>
+    </header>
+  );
+}
+
+function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
+  const c = T[lang], r = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = r.current!; const m = (e: PointerEvent) => { const b = el.getBoundingClientRect(); el.style.setProperty('--mx', `${e.clientX - b.left}px`); el.style.setProperty('--my', `${e.clientY - b.top}px`); };
+    el.addEventListener('pointermove', m); return () => el.removeEventListener('pointermove', m);
+  }, []);
+  const rise = (d: number) => ({ initial: { opacity: 0, y: 24 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1.1, delay: d, ease } });
+  return (
+    <section className="hero" ref={r}>
+      <div className="orb o1" /><div className="orb o2" />
+      <div className="hero-in">
+        <div className="hero-copy">
+          <h1 key={lang}>{c.title.map((l, i) => <span className="mask" key={l}><motion.span initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></span>)}</h1>
+          <motion.p {...rise(0.7)}>{c.lead}</motion.p>
+          <motion.div className="hero-cta" {...rise(0.9)}>
+            <Magnetic><a className="btn" href="#contact">{c.cta}<Arrow /></a></Magnetic>
+            <a className="link" href="#work">{c.more}</a>
+          </motion.div>
+        </div>
+        <motion.div className="hero-art" initial={{ opacity: 0, scale: 0.92 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1.8, delay: 0.3, ease }}><Emblem /></motion.div>
+      </div>
+      <div className="marquee" aria-hidden><div className="track">{[0, 1].map(k => <div key={k}>{c.marquee.map(m => <span key={m + k}>{m}</span>)}{c.marquee.map(m => <span key={m + k + 'b'}>{m}</span>)}</div>)}</div></div>
+    </section>
+  );
+}
+
+function Binhai({ c }: { c: typeof T.en }) {
+  const r = useRef<HTMLElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'end start'] });
+  const y0 = useTransform(p, [0, 1], [70, -70]), y1 = useTransform(p, [0, 1], [30, -40]), y2 = useTransform(p, [0, 1], [60, -70]), y3 = useTransform(p, [0, 1], [20, -30]);
+  const cars: [ImgKey, MotionValue<number>, string][] = [['tiggo3', y1, 'Chery Tiggo 3X'], ['monza', y2, 'Chevrolet Monza'], ['tiggo5', y3, 'Chery Tiggo 5X']];
+  return (
+    <article className="case" ref={r}>
+      <div className="case-copy">
+        <span className="tag">{c.real}</span>
+        <h3>{c.binhai[0]}</h3><p>{c.binhai[1]}</p>
+        <a className="link dark" href={BINHAI_URL} target="_blank" rel="noreferrer">{c.open}<Arrow /></a>
+      </div>
+      <div className="case-media">
+        <motion.div className="m-main" style={{ y: y0 }}><Img k="hero" alt="BINHAI AUTO" /></motion.div>
+        <div className="m-row">{cars.map(([k, y, a]) => <motion.div key={k} style={{ y }}><Img k={k} alt={a} /></motion.div>)}</div>
+      </div>
+    </article>
+  );
+}
+
+const Concept = ({ kind, name, text, tag }: { kind: string; name: string; text: string; tag: string }) => (
+  <article className="concept"><div className={`art art-${kind}`} /><div className="concept-t"><span className="tag">{tag}</span><h3>{name}</h3><p>{text}</p></div></article>
+);
+
+function Word({ children, p, a, b }: { children: ReactNode; p: MotionValue<number>; a: number; b: number }) {
+  const o = useTransform(p, [a, b], [0.16, 1]); return <motion.span style={{ opacity: o }}>{children}</motion.span>;
+}
+function Statement({ text, zh }: { text: string; zh: boolean }) {
+  const r = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start 0.85', 'end 0.55'] });
+  const w = zh ? [...text] : text.split(' ');
+  return <p className="statement" ref={r}>{w.map((x, i) => <Word key={i} p={p} a={i / w.length} b={(i + 1) / w.length}>{x}{zh ? '' : ' '}</Word>)}</p>;
+}
+
+function Contact({ c }: { c: typeof T.en }) {
+  const [sent, setSent] = useState(false);
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); const f = new FormData(e.currentTarget);
+    const body = `${f.get('msg')}\n\n— ${f.get('name')} (${f.get('how')})`;
+    location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent('NEURA — ' + f.get('name'))}&body=${encodeURIComponent(body)}`; setSent(true);
+  };
+  return (
+    <section id="contact" className="contact"><div className="wrap cgrid">
+      <div>
+        <h2>{c.contactTitle.map(l => <span key={l} className="mask"><motion.span initial={{ y: '115%' }} whileInView={{ y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2, ease }}>{l}</motion.span></span>)}</h2>
+        <p className="cbody">{c.contactBody}</p>
+        <div className="clinks"><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a><a href={CONTACT.telegram} target="_blank" rel="noreferrer">{CONTACT.telegramLabel}</a></div>
+      </div>
+      <form onSubmit={submit}>
+        <input name="name" placeholder={c.name} required /><input name="how" placeholder={c.how} required />
+        <textarea name="msg" placeholder={c.msg} rows={3} required />
+        <Magnetic><button className="btn gold">{c.send}<Arrow /></button></Magnetic>
+        {sent && <p className="sent">{c.sent}</p>}
+      </form>
+    </div></section>
+  );
+}
+
+export default function App() {
+  const [lang, setLang] = useState<Lang>(() => ((localStorage.getItem('lang') as Lang) || (navigator.language.startsWith('zh') ? 'zh' : navigator.language.startsWith('ru') ? 'ru' : 'en')));
+  const [ready, setReady] = useState(false); const [scrolled, setScrolled] = useState(false);
+  const lenis = useRef<Lenis>(); const c = T[lang];
+  useEffect(() => {
+    const l = new Lenis({ lerp: 0.085, smoothWheel: !matchMedia('(prefers-reduced-motion: reduce)').matches }); lenis.current = l; l.stop();
+    let id = 0; const raf = (t: number) => { l.raf(t); id = requestAnimationFrame(raf); }; id = requestAnimationFrame(raf);
+    const click = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest('a[href^="#"]'); if (!a) return;
+      e.preventDefault(); const h = a.getAttribute('href')!; l.scrollTo(h === '#' ? 0 : h, { duration: 1.5 });
+    };
+    const sc = () => setScrolled(scrollY > 40);
+    document.addEventListener('click', click); addEventListener('scroll', sc, { passive: true });
+    return () => { cancelAnimationFrame(id); document.removeEventListener('click', click); removeEventListener('scroll', sc); l.destroy(); };
+  }, []);
+  useEffect(() => { ready ? lenis.current?.start() : lenis.current?.stop(); }, [ready]);
+  useEffect(() => {
+    localStorage.setItem('lang', lang); document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang; document.title = c.seoTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', c.seoDesc);
+  }, [lang, c]);
+  return (
+    <MotionConfig reducedMotion="user">
+      <div className={`site ${lang}`}>
+        <AnimatePresence>{!ready && <Preloader done={() => setReady(true)} />}</AnimatePresence>
+        <Header lang={lang} setLang={setLang} scrolled={scrolled} />
+        <main>
+          <Hero lang={lang} ready={ready} />
+          <section id="work" className="work"><div className="wrap">
+            <div className="head"><h2>{c.workTitle}</h2><p>{c.workIntro}</p></div>
+            <Binhai c={c} />
+            <div className="concepts">
+              <Concept kind="orbit" name={c.orbit[0]} text={c.orbit[1]} tag={c.concept} />
+              <Concept kind="atlas" name={c.atlas[0]} text={c.atlas[1]} tag={c.concept} />
+            </div>
+          </div></section>
+          <section id="studio" className="studio"><div className="wrap">
+            <Statement key={lang} text={c.statement} zh={lang === 'zh'} />
+            <div className="facts">{c.facts.map(([t, d]) => <div key={t}><h4>{t}</h4><p>{d}</p></div>)}</div>
+          </div></section>
+          <section id="process" className="process"><div className="wrap">
+            <h2>{c.processTitle}</h2>
+            <div className="steps">{c.steps.map(([t, d], i) => (
+              <div key={t}><motion.i initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 1.5, delay: i * 0.18, ease }} />
+                <span className="n">{i + 1}</span><h4>{t}</h4><p>{d}</p></div>
+            ))}</div>
+          </div></section>
+          <Contact c={c} />
+        </main>
+        <footer><div className="wrap"><span className="logo"><span className="logo-mark" />NEURA</span><span>{c.footer} · 2026</span></div></footer>
+      </div>
+    </MotionConfig>
+  );
+}
