@@ -63,8 +63,9 @@ function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) =>
   );
 }
 
-function HLine({ l, i, ready, sp }: { l: string; i: number; ready: boolean; sp: MotionValue<number> }) {
-  const x = useTransform(sp, [-0.5, 0.5], [(i - 1) * 24, (1 - i) * 24]);
+function HLine({ l, i, ready, sp, amp, n }: { l: string; i: number; ready: boolean; sp: MotionValue<number>; amp: number; n: number }) {
+  const f = n > 1 ? (i - (n - 1) / 2) / ((n - 1) / 2) : 0;
+  const x = useTransform(sp, [-0.5, 0.5], [f * amp, -f * amp]);
   return <motion.span className="hl" style={{ x }}><span className="mask"><motion.span className="hl" initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></span></motion.span>;
 }
 function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
@@ -73,7 +74,7 @@ function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
   const rise = (d: number) => ({ initial: { opacity: 0, y: 24 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1.1, delay: d, ease } });
   return (
     <section className="hero"><div className="wrap">
-      <h1 key={lang}>{c.title.map((l, i) => <HLine key={l} l={l} i={i} ready={ready} sp={sp} />)}</h1>
+      <h1 key={lang}>{c.title.map((l, i) => <HLine key={l} l={l} i={i} ready={ready} sp={sp} amp={24} n={c.title.length} />)}</h1>
       <div className="hero-foot">
         <motion.p {...rise(0.8)}>{c.lead}</motion.p>
         <motion.div className="hero-cta" {...rise(1)}><Magnetic><a className="btn" href="#contact">{c.cta}<Arrow /></a></Magnetic><a className="link" href="#work">{c.more}</a></motion.div>
