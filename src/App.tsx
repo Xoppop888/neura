@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, MotionConfig, MotionValue, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, MotionConfig, MotionValue, animate, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import Lenis from 'lenis';
 import { lqip } from './lqip';
 import { BINHAI_URL, CONTACT, Lang, T } from './copy';
@@ -48,29 +48,19 @@ function Img({ k, alt }: { k: ImgKey; alt: string }) {
   return <span className="img" style={{ backgroundImage: `url(${lqip[k]})` }}><img ref={r} src={IMG[k]} alt={alt} decoding="async" className={ok ? 'in' : ''} onLoad={() => setOk(true)} /></span>;
 }
 
-function Emblem() {
-  const x = useMotionValue(0), y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 50, damping: 18 }), sy = useSpring(y, { stiffness: 50, damping: 18 });
-  useEffect(() => {
-    const m = (e: PointerEvent) => { x.set((e.clientX / innerWidth - 0.5) * 36); y.set((e.clientY / innerHeight - 0.5) * 36); };
-    addEventListener('pointermove', m); return () => removeEventListener('pointermove', m);
-  }, []);
+const WF: [number, number, number, number, string][] = [[11,3,2.3,4.8,'o'],[14,4.2,8,2,'t'],[34,4.8,5,1.3,'t'],[41,4.8,5,1.3,'t'],[48,4.8,3.5,1.3,'t'],[53,4.8,6.5,1.3,'t'],[60,4.8,5,1.3,'t'],[78,2.2,10.9,5.8,'b'],[11,14,33,8,'t'],[11,24,13,8,'t'],[11,35,29,8,'t'],[11,46,17,8,'t'],[11,60,34,1.6,'t'],[11,64,36,1.6,'t'],[11,68,20,1.6,'t'],[11,75,11,6,'b'],[23.5,75,10.6,6,'b'],[52,10,48,90,'m']];
+function Reveal({ ready }: { ready: boolean }) {
+  const x = useMotionValue(100); const r = useRef<HTMLDivElement>(null);
+  const clip = useTransform(x, v => `inset(0 ${100 - v}% 0 0)`), left = useTransform(x, v => `${v}%`);
+  useEffect(() => { if (ready) animate(x, 38, { duration: 2.4, delay: 0.8, ease }); }, [ready]);
+  const move = (e: React.PointerEvent) => { const b = r.current!.getBoundingClientRect(); animate(x, Math.min(96, Math.max(4, ((e.clientX - b.left) / b.width) * 100)), { type: 'spring', stiffness: 120, damping: 22 }); };
   return (
-    <motion.div className="emblem" style={{ x: sx, y: sy }} aria-hidden>
-      <svg viewBox="-200 -200 400 400">
-        <defs>
-          <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f0dcae" /><stop offset=".55" stopColor="#b89a5e" /><stop offset="1" stopColor="#6b5832" /></linearGradient>
-          <radialGradient id="core"><stop offset="0" stopColor="#f0dcae" /><stop offset=".6" stopColor="#b89a5e" /><stop offset="1" stopColor="#b89a5e" stopOpacity="0" /></radialGradient>
-        </defs>
-        {[0, 1, 2, 3, 4].map(i => {
-          const rx = 192 - i * 34, ry = rx * (0.36 + i * 0.1);
-          return <g key={i} className="ring" style={{ animationDuration: `${46 + i * 20}s`, animationDirection: i % 2 ? 'reverse' : 'normal' }}>
-            <g transform={`rotate(${i * 34})`}><ellipse rx={rx} ry={ry} fill="none" stroke="url(#gold)" strokeWidth={i === 2 ? 1.5 : 0.7} opacity={0.95 - i * 0.13} /><circle cx={rx} r={i === 2 ? 4.5 : 2.6} fill="#f0dcae" /></g>
-          </g>;
-        })}
-        <circle r="56" fill="url(#core)" opacity=".55" /><circle r="17" fill="url(#gold)" />
-      </svg>
-    </motion.div>
+    <div className="frame"><div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div>
+      <div className="rv" ref={r} onPointerMove={move} onPointerLeave={() => animate(x, 38, { type: 'spring', stiffness: 60, damping: 20 })}>
+        <Img k="site" alt="binhaiauto.ru" />
+        <motion.div className="wf" style={{ clipPath: clip }}>{WF.map(([l, t, w, h, c], i) => <i key={i} className={c} style={{ left: `${l}%`, top: `${t}%`, width: `${w}%`, height: `${h}%` }} />)}</motion.div>
+        <motion.span className="rv-line" style={{ left }} />
+      </div></div>
   );
 }
 
@@ -108,9 +98,9 @@ function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
             <a className="link" href="#work">{c.more}</a>
           </motion.div>
         </div>
-        <motion.div className="hero-art" initial={{ opacity: 0, scale: 0.92 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1.8, delay: 0.3, ease }}><Emblem /></motion.div>
+        <motion.div className="hero-art" initial={{ opacity: 0, scale: 0.92 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1.8, delay: 0.3, ease }}><Reveal ready={ready} /></motion.div>
       </div>
-      <div className="marquee" aria-hidden><div className="track">{[0, 1].map(k => <div key={k}>{c.marquee.map(m => <span key={m + k}>{m}</span>)}{c.marquee.map(m => <span key={m + k + 'b'}>{m}</span>)}</div>)}</div></div>
+      <div className="svc">{c.marquee.map(m => <span key={m}>{m}</span>)}</div>
     </section>
   );
 }
@@ -135,10 +125,6 @@ function Binhai({ c }: { c: typeof T.en }) {
   );
 }
 
-const Concept = ({ kind, name, text, tag }: { kind: string; name: string; text: string; tag: string }) => (
-  <article className="concept"><div className={`art art-${kind}`} /><div className="concept-t"><span className="tag">{tag}</span><h3>{name}</h3><p>{text}</p></div></article>
-);
-
 function Word({ children, p, a, b }: { children: ReactNode; p: MotionValue<number>; a: number; b: number }) {
   const o = useTransform(p, [a, b], [0.16, 1]); return <motion.span style={{ opacity: o }}>{children}</motion.span>;
 }
@@ -150,7 +136,8 @@ function Statement({ text, zh }: { text: string; zh: boolean }) {
 }
 
 function Contact({ c }: { c: typeof T.en }) {
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState(false); const [qr, setQr] = useState(false);
+  useEffect(() => { const i = new Image(); i.onload = () => setQr(true); i.src = '/images/wechat-qr.webp'; }, []);
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); const f = new FormData(e.currentTarget);
     const body = `${f.get('msg')}\n\n— ${f.get('name')} (${f.get('how')})`;
@@ -162,6 +149,7 @@ function Contact({ c }: { c: typeof T.en }) {
         <h2>{c.contactTitle.map(l => <span key={l} className="mask"><motion.span initial={{ y: '115%' }} whileInView={{ y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2, ease }}>{l}</motion.span></span>)}</h2>
         <p className="cbody">{c.contactBody}</p>
         <div className="clinks"><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a><a href={CONTACT.telegram} target="_blank" rel="noreferrer">{CONTACT.telegramLabel}</a></div>
+        {qr && <div className="qr"><img src="/images/wechat-qr.webp" alt="WeChat" width="132" height="132" /><span>{c.wechat}{CONTACT.wechatId && <b>{CONTACT.wechatId}</b>}</span></div>}
       </div>
       <form onSubmit={submit}>
         <input name="name" placeholder={c.name} required /><input name="how" placeholder={c.how} required />
@@ -203,10 +191,7 @@ export default function App() {
           <section id="work" className="work"><div className="wrap">
             <div className="head"><h2>{c.workTitle}</h2><p>{c.workIntro}</p></div>
             <Binhai c={c} />
-            <div className="concepts">
-              <Concept kind="orbit" name={c.orbit[0]} text={c.orbit[1]} tag={c.concept} />
-              <Concept kind="atlas" name={c.atlas[0]} text={c.atlas[1]} tag={c.concept} />
-            </div>
+            <a className="next" href="#contact"><h3>{c.nextTitle}</h3><span className="link dark">{c.cta}<Arrow /></span></a>
           </div></section>
           <section id="studio" className="studio"><div className="wrap">
             <Statement key={lang} text={c.statement} zh={lang === 'zh'} />
