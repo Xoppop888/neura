@@ -2,10 +2,10 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, MotionConfig, MotionValue, animate, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import Lenis from 'lenis';
 import { lqip } from './lqip';
-import { BINHAI_URL, CONTACT, Lang, T } from './copy';
+import { BINHAI_URL, BOT_URL, CONTACT, Lang, T } from './copy';
 
 const ease = [0.16, 1, 0.3, 1] as const;
-const IMG = { site: '/images/binhai/site.webp', tiggo3: '/images/binhai/tiggo3.webp', monza: '/images/binhai/monza.webp', tiggo5: '/images/binhai/tiggo5.webp' };
+const IMG = { site: '/images/binhai/site.webp', bot1: '/images/binhai/bot1.webp', bot2: '/images/binhai/bot2.webp', bot3: '/images/binhai/bot3.webp' };
 type ImgKey = keyof typeof IMG;
 const Arrow = () => <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M3 11 11 3M4.5 3H11v6.5" /></svg>;
 
@@ -42,10 +42,10 @@ function Magnetic({ children }: { children: ReactNode }) {
     onPointerLeave={() => { x.set(0); y.set(0); }}>{children}</motion.div>;
 }
 
-function Img({ k, alt }: { k: ImgKey; alt: string }) {
+function Img({ k, alt, ar }: { k: ImgKey; alt: string; ar?: string }) {
   const [ok, setOk] = useState(false); const r = useRef<HTMLImageElement>(null);
   useEffect(() => { if (r.current?.complete && r.current.naturalWidth) setOk(true); }, []);
-  return <span className="img" style={{ backgroundImage: `url(${lqip[k]})` }}><img ref={r} src={IMG[k]} alt={alt} decoding="async" className={ok ? 'in' : ''} onLoad={() => setOk(true)} /></span>;
+  return <span className="img" style={{ backgroundImage: `url(${lqip[k]})`, aspectRatio: ar }}><img ref={r} src={IMG[k]} alt={alt} decoding="async" className={ok ? 'in' : ''} onLoad={() => setOk(true)} /></span>;
 }
 
 function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) => void; scrolled: boolean }) {
@@ -93,6 +93,19 @@ function Binhai({ c }: { c: typeof T.en }) {
       <div ref={r}><motion.a className="frame" style={{ scale, borderRadius: rad }} href={BINHAI_URL} target="_blank" rel="noreferrer" data-cursor={c.open} aria-label="binhaiauto.ru">
         <div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div><Img k="site" alt="binhaiauto.ru" />
       </motion.a></div>
+    </article>
+  );
+}
+
+const SHOTS: [ImgKey, string][] = [['bot1', '581/1013'], ['bot2', '587/1003'], ['bot3', '674/1020']];
+function BotCase({ c }: { c: typeof T.en }) {
+  const r = useRef<HTMLElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'end start'] });
+  const ys = [useTransform(p, [0, 1], [80, -60]), useTransform(p, [0, 1], [20, -110]), useTransform(p, [0, 1], [110, -30])];
+  return (
+    <article className="case bot" ref={r}>
+      <div className="case-copy"><div><span className="tag">{c.botTag}</span><h3>{c.bot[0]}</h3></div><div><p>{c.bot[1]}</p><a className="link" href={BOT_URL} target="_blank" rel="noreferrer">{c.botOpen}<Arrow /></a></div></div>
+      <div className="shots">{SHOTS.map(([k, ar], i) => <motion.figure key={k} style={{ y: ys[i] }}><div className="phone"><Img k={k} ar={ar} alt={c.botCaps[i]} /></div><figcaption>{c.botCaps[i]}</figcaption></motion.figure>)}</div>
     </article>
   );
 }
@@ -179,6 +192,7 @@ export default function App() {
           <Round id="work" className="work dark"><div className="wrap">
             <div className="head"><h2>{c.workTitle}</h2><p>{c.workIntro}</p></div>
             <Binhai c={c} />
+            <BotCase c={c} />
             <a className="next" href="#contact"><h3>{c.nextTitle}</h3><span className="link dark">{c.cta}<Arrow /></span></a>
           </div></Round>
           <section id="studio" className="studio"><div className="wrap">

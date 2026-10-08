@@ -2,11 +2,12 @@ export type Lang = 'en' | 'ru' | 'zh';
 // TODO: replace with your real contacts
 export const CONTACT = { email: 'hello@neura.studio', telegram: 'https://t.me/neura_studio', telegramLabel: '@neura_studio', wechatId: '' };
 export const BINHAI_URL = 'https://binhaiauto.ru/';
+export const BOT_URL = 'https://t.me/Binhaiauto_bot';
 type Copy = {
   nav: string[]; title: string[]; lead: string; cta: string; more: string; marquee: string[];
   workTitle: string; workIntro: string; real: string; concept: string; open: string;
   binhai: [string, string]; 
-  nextTitle: string; statement: string; facts: [string, string][];
+  bot: [string, string]; botTag: string; botOpen: string; botCaps: [string, string, string]; nextTitle: string; statement: string; facts: [string, string][];
   processTitle: string; steps: [string, string][];
   contactTitle: string[]; contactBody: string; name: string; how: string; msg: string; send: string; sent: string;
   wechat: string; footer: string; seoTitle: string; seoDesc: string;
@@ -21,6 +22,8 @@ export const T: Record<Lang, Copy> = {
     workTitle: 'Selected work', workIntro: 'A short selection. Each project is built around one clear idea.',
     real: 'Live project', concept: 'Concept', open: 'Open the site',
     binhai: ['BINHAI AUTO', 'Cars from China, delivered across Russia. You see the real car, a clear price and every step of the deal.'],
+    bot: ['BINHAI BOT', 'A Telegram bot that calculates the turnkey cost of a car from China: price, duty, recycling fee, fees and broker services. The request goes straight to a manager.'], botTag: 'Telegram bot', botOpen: 'Open the bot',
+    botCaps: ['The bot asks a few questions', 'The full cost, itemized', 'The request reaches a manager'],
     nextTitle: 'Your project is next',
     statement: 'We bring strategy, design and code into one process. AI lets us explore further and move faster. Taste decides what stays.',
     facts: [['Design first', 'Every build starts from the interface, never from a template.'], ['AI-assisted', 'Faster exploration, with human judgment on every decision.'], ['Independent', 'A small team and a direct conversation from day one.']],
@@ -39,6 +42,8 @@ export const T: Record<Lang, Copy> = {
     workTitle: 'Избранные работы', workIntro: 'Короткая подборка. Каждый проект построен вокруг одной ясной идеи.',
     real: 'Действующий проект', concept: 'Концепт', open: 'Открыть сайт',
     binhai: ['BINHAI AUTO', 'Автомобили из Китая с доставкой по России. Вы видите реальную машину, понятную стоимость и весь путь сделки.'],
+    bot: ['BINHAI BOT', 'Telegram-бот считает стоимость автомобиля из Китая под ключ: цена, пошлина, утильсбор, сборы и услуги брокера. Заявка сразу уходит менеджеру.'], botTag: 'Telegram-бот', botOpen: 'Открыть бота',
+    botCaps: ['Бот задаёт несколько вопросов', 'Полная стоимость по пунктам', 'Заявка приходит менеджеру'],
     nextTitle: 'Следующий проект — ваш',
     statement: 'Мы соединяем стратегию, дизайн и код в одном процессе. AI помогает исследовать дальше и двигаться быстрее. Вкус решает, что останется.',
     facts: [['Сначала дизайн', 'Каждый проект начинается с интерфейса, а не с шаблона.'], ['С помощью AI', 'Быстрее исследуем, а решения принимает человек.'], ['Независимые', 'Небольшая команда и прямой разговор с первого дня.']],
@@ -57,6 +62,8 @@ export const T: Record<Lang, Copy> = {
     workTitle: '精选作品', workIntro: '少而精。每个项目都围绕一个清晰的想法展开。',
     real: '上线项目', concept: '概念方案', open: '访问网站',
     binhai: ['BINHAI AUTO', '中国汽车，配送至俄罗斯全境。看得到实车，价格透明，交易全程清晰。'],
+    bot: ['BINHAI BOT', 'Telegram 机器人，自动核算中国汽车到俄罗斯的整车成本：车价、关税、报废回收费、各项手续费和报关服务费。订单直接发送给业务经理。'], botTag: 'Telegram 机器人', botOpen: '打开机器人',
+    botCaps: ['机器人逐步提问', '成本明细一目了然', '订单直达业务经理'],
     nextTitle: '下一个项目，属于您',
     statement: '我们将策略、设计与代码融为一个流程。AI 让我们走得更远、更快，而品味决定最终留下什么。',
     facts: [['设计先行', '每个项目都从界面出发，而不是从模板出发。'], ['AI 辅助', '探索更快，每个决定仍由人来把关。'], ['独立工作室', '小团队，从第一天起直接沟通。']],
