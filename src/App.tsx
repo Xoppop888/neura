@@ -98,13 +98,12 @@ function Binhai({ c }: { c: typeof T.en }) {
 }
 
 function Cursor() {
-  const x = useMotionValue(-99), y = useMotionValue(-99), cfg = { stiffness: 500, damping: 40, mass: 0.4 };
-  const sx = useSpring(x, cfg), sy = useSpring(y, cfg); const [t, setT] = useState(''); const [hot, setHot] = useState(false);
+  const x = useMotionValue(-99), y = useMotionValue(-99); const [t, setT] = useState(''); const [hot, setHot] = useState(false);
   useEffect(() => {
     const m = (e: PointerEvent) => { x.set(e.clientX); y.set(e.clientY); const el = (e.target as HTMLElement).closest('[data-cursor],a,button'); setT(el?.getAttribute('data-cursor') || ''); setHot(!!el); };
     addEventListener('pointermove', m); return () => removeEventListener('pointermove', m);
   }, []);
-  return <motion.div className={`cur ${hot ? 'hot' : ''} ${t ? 'lbl' : ''}`} style={{ x: sx, y: sy }}><span>{t}</span></motion.div>;
+  return <motion.div className={`cur ${hot ? 'hot' : ''} ${t ? 'lbl' : ''}`} style={{ x, y }}><i /><span>{t}</span></motion.div>;
 }
 
 function Round({ id, className, children }: { id: string; className: string; children: ReactNode }) {
