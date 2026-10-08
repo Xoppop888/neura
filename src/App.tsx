@@ -48,31 +48,13 @@ function Img({ k, alt }: { k: ImgKey; alt: string }) {
   return <span className="img" style={{ backgroundImage: `url(${lqip[k]})` }}><img ref={r} src={IMG[k]} alt={alt} decoding="async" className={ok ? 'in' : ''} onLoad={() => setOk(true)} /></span>;
 }
 
-const WF: [number, number, number, number, string][] = [[11,3,2.3,4.8,'o'],[14,4.2,8,2,'t'],[34,4.8,5,1.3,'t'],[41,4.8,5,1.3,'t'],[48,4.8,3.5,1.3,'t'],[53,4.8,6.5,1.3,'t'],[60,4.8,5,1.3,'t'],[78,2.2,10.9,5.8,'b'],[11,14,33,8,'t'],[11,24,13,8,'t'],[11,35,29,8,'t'],[11,46,17,8,'t'],[11,60,34,1.6,'t'],[11,64,36,1.6,'t'],[11,68,20,1.6,'t'],[11,75,11,6,'b'],[23.5,75,10.6,6,'b'],[52,10,48,90,'m']];
-function Reveal({ ready }: { ready: boolean }) {
-  const x = useMotionValue(100); const r = useRef<HTMLDivElement>(null); const drag = useRef(false);
-  const clip = useTransform(x, v => `inset(0 ${100 - v}% 0 0)`), left = useTransform(x, v => `${v}%`);
-  useEffect(() => { if (!ready) return; const a = animate(x, 38, { duration: 2.6, delay: 0.9, ease: [0.65, 0, 0.35, 1] }); return () => a.stop(); }, [ready]);
-  const set = (e: React.PointerEvent) => { const b = r.current!.getBoundingClientRect(); x.set(Math.min(97, Math.max(3, ((e.clientX - b.left) / b.width) * 100))); };
-  return (
-    <div className="frame"><div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div>
-      <div className="rv" ref={r}>
-        <Img k="site" alt="binhaiauto.ru" />
-        <motion.div className="wf" style={{ clipPath: clip }}>{WF.map(([l, t, w, h, c], i) => <i key={i} className={c} style={{ left: `${l}%`, top: `${t}%`, width: `${w}%`, height: `${h}%` }} />)}</motion.div>
-        <motion.span className="rv-line" style={{ left }}
-          onPointerDown={e => { x.stop(); drag.current = true; e.currentTarget.setPointerCapture(e.pointerId); }}
-          onPointerMove={e => drag.current && set(e)} onPointerUp={() => { drag.current = false; }} />
-      </div></div>
-  );
-}
-
 function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) => void; scrolled: boolean }) {
   const [open, setOpen] = useState(false); const c = T[lang];
   const ids = ['#work', '#studio', '#process', '#contact'];
   return (
     <header className={`hd ${scrolled ? 'solid' : ''} ${open ? 'open' : ''}`}>
       <a href="#" className="logo" onClick={() => setOpen(false)}><span className="logo-mark" />NEURA</a>
-      <nav>{c.nav.map((n, i) => <a key={n} href={ids[i]} onClick={() => setOpen(false)}>{n}</a>)}</nav>
+      <nav>{c.nav.map((n, i) => <a key={n} className="roll" href={ids[i]} onClick={() => setOpen(false)}><span data-t={n}>{n}</span></a>)}</nav>
       <div className="hd-r">
         <div className="langs">{(['en', 'ru', 'zh'] as Lang[]).map(l => <button key={l} className={l === lang ? 'on' : ''} onClick={() => setLang(l)}>{l === 'zh' ? '中文' : l.toUpperCase()}</button>)}</div>
         <button className="burger" aria-label="Menu" onClick={() => setOpen(!open)}><i /><i /></button>
@@ -81,46 +63,55 @@ function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) =>
   );
 }
 
+function HLine({ l, i, ready, sp }: { l: string; i: number; ready: boolean; sp: MotionValue<number> }) {
+  const x = useTransform(sp, [-0.5, 0.5], [(i - 1) * 24, (1 - i) * 24]);
+  return <span className="mask"><motion.span className="hl" style={{ x }}><motion.span className="hl" initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></motion.span></span>;
+}
 function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
-  const c = T[lang], r = useRef<HTMLElement>(null);
+  const c = T[lang]; const px = useMotionValue(0), sp = useSpring(px, { stiffness: 60, damping: 20 });
+  useEffect(() => { const m = (e: PointerEvent) => px.set(e.clientX / innerWidth - 0.5); addEventListener('pointermove', m); return () => removeEventListener('pointermove', m); }, []);
   const rise = (d: number) => ({ initial: { opacity: 0, y: 24 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1.1, delay: d, ease } });
   return (
-    <section className="hero" ref={r}>
-      <div className="orb o1" /><div className="orb o2" />
-      <div className="hero-in">
-        <div className="hero-copy">
-          <h1 key={lang}>{c.title.map((l, i) => <span className="mask" key={l}><motion.span initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></span>)}</h1>
-          <motion.p {...rise(0.7)}>{c.lead}</motion.p>
-          <motion.div className="hero-cta" {...rise(0.9)}>
-            <Magnetic><a className="btn" href="#contact">{c.cta}<Arrow /></a></Magnetic>
-            <a className="link" href="#work">{c.more}</a>
-          </motion.div>
-        </div>
-        <motion.div className="hero-art" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1.4, delay: 0.3, ease }}><Reveal ready={ready} /></motion.div>
+    <section className="hero"><div className="wrap">
+      <h1 key={lang}>{c.title.map((l, i) => <HLine key={l} l={l} i={i} ready={ready} sp={sp} />)}</h1>
+      <div className="hero-foot">
+        <motion.p {...rise(0.8)}>{c.lead}</motion.p>
+        <motion.div className="hero-cta" {...rise(1)}><Magnetic><a className="btn" href="#contact">{c.cta}<Arrow /></a></Magnetic><a className="link" href="#work">{c.more}</a></motion.div>
       </div>
       <div className="svc">{c.marquee.map(m => <span key={m}>{m}</span>)}</div>
-    </section>
+    </div></section>
   );
 }
 
 function Binhai({ c }: { c: typeof T.en }) {
-  const r = useRef<HTMLElement>(null); const [miss, setMiss] = useState(false);
-  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'end start'] });
-  const y = useTransform(p, [0, 1], [50, -50]);
-  useEffect(() => { const i = new Image(); i.onerror = () => setMiss(true); i.src = IMG.site; }, []);
+  const r = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'start 0.2'] });
+  const scale = useTransform(p, [0, 1], [0.72, 1]), rad = useTransform(p, [0, 1], [56, 14]);
   return (
-    <article className="case" ref={r}>
-      <div className="case-copy">
-        <span className="tag">{c.real}</span>
-        <h3>{c.binhai[0]}</h3><p>{c.binhai[1]}</p>
-        <a className="link dark" href={BINHAI_URL} target="_blank" rel="noreferrer">{c.open}<Arrow /></a>
-      </div>
-      <motion.a className="frame" style={{ y }} href={BINHAI_URL} target="_blank" rel="noreferrer" aria-label="binhaiauto.ru">
-        <div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div>
-        {miss ? <div className="m-row m-in">{(['tiggo3', 'monza', 'tiggo5'] as ImgKey[]).map(k => <Img key={k} k={k} alt="" />)}</div> : <Img k="site" alt="binhaiauto.ru" />}
-      </motion.a>
+    <article className="case">
+      <div className="case-copy"><div><span className="tag">{c.real}</span><h3>{c.binhai[0]}</h3></div><div><p>{c.binhai[1]}</p><a className="link" href={BINHAI_URL} target="_blank" rel="noreferrer">{c.open}<Arrow /></a></div></div>
+      <div ref={r}><motion.a className="frame" style={{ scale, borderRadius: rad }} href={BINHAI_URL} target="_blank" rel="noreferrer" data-cursor={c.open} aria-label="binhaiauto.ru">
+        <div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div><Img k="site" alt="binhaiauto.ru" />
+      </motion.a></div>
     </article>
   );
+}
+
+function Cursor() {
+  const x = useMotionValue(-99), y = useMotionValue(-99), cfg = { stiffness: 500, damping: 40, mass: 0.4 };
+  const sx = useSpring(x, cfg), sy = useSpring(y, cfg); const [t, setT] = useState(''); const [hot, setHot] = useState(false);
+  useEffect(() => {
+    const m = (e: PointerEvent) => { x.set(e.clientX); y.set(e.clientY); const el = (e.target as HTMLElement).closest('[data-cursor],a,button'); setT(el?.getAttribute('data-cursor') || ''); setHot(!!el); };
+    addEventListener('pointermove', m); return () => removeEventListener('pointermove', m);
+  }, []);
+  return <motion.div className={`cur ${hot ? 'hot' : ''} ${t ? 'lbl' : ''}`} style={{ x: sx, y: sy }}><span>{t}</span></motion.div>;
+}
+
+function Round({ id, className, children }: { id: string; className: string; children: ReactNode }) {
+  const r = useRef<HTMLElement>(null);
+  const { scrollYProgress: p } = useScroll({ target: r, offset: ['start end', 'start 0.4'] });
+  const rad = useTransform(p, [0, 1], [110, 0]);
+  return <motion.section id={id} ref={r} className={className} style={{ borderTopLeftRadius: rad, borderTopRightRadius: rad }}>{children}</motion.section>;
 }
 
 function Word({ children, p, a, b }: { children: ReactNode; p: MotionValue<number>; a: number; b: number }) {
@@ -142,7 +133,7 @@ function Contact({ c }: { c: typeof T.en }) {
     location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent('NEURA — ' + f.get('name'))}&body=${encodeURIComponent(body)}`; setSent(true);
   };
   return (
-    <section id="contact" className="contact"><div className="wrap cgrid">
+    <Round id="contact" className="contact dark"><div className="wrap cgrid">
       <div>
         <h2>{c.contactTitle.map(l => <span key={l} className="mask"><motion.span initial={{ y: '115%' }} whileInView={{ y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2, ease }}>{l}</motion.span></span>)}</h2>
         <p className="cbody">{c.contactBody}</p>
@@ -155,7 +146,7 @@ function Contact({ c }: { c: typeof T.en }) {
         <Magnetic><button className="btn gold">{c.send}<Arrow /></button></Magnetic>
         {sent && <p className="sent">{c.sent}</p>}
       </form>
-    </div></section>
+    </div></Round>
   );
 }
 
@@ -182,29 +173,26 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className={`site ${lang}`}>
-        <AnimatePresence>{!ready && <Preloader done={() => setReady(true)} />}</AnimatePresence>
+        <Cursor /><AnimatePresence>{!ready && <Preloader done={() => setReady(true)} />}</AnimatePresence>
         <Header lang={lang} setLang={setLang} scrolled={scrolled} />
         <main>
           <Hero lang={lang} ready={ready} />
-          <section id="work" className="work"><div className="wrap">
+          <Round id="work" className="work dark"><div className="wrap">
             <div className="head"><h2>{c.workTitle}</h2><p>{c.workIntro}</p></div>
             <Binhai c={c} />
             <a className="next" href="#contact"><h3>{c.nextTitle}</h3><span className="link dark">{c.cta}<Arrow /></span></a>
-          </div></section>
+          </div></Round>
           <section id="studio" className="studio"><div className="wrap">
             <Statement key={lang} text={c.statement} zh={lang === 'zh'} />
             <div className="facts">{c.facts.map(([t, d]) => <div key={t}><h4>{t}</h4><p>{d}</p></div>)}</div>
           </div></section>
           <section id="process" className="process"><div className="wrap">
             <h2>{c.processTitle}</h2>
-            <div className="steps">{c.steps.map(([t, d], i) => (
-              <div key={t}><motion.i initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 1.5, delay: i * 0.18, ease }} />
-                <span className="n">{i + 1}</span><h4>{t}</h4><p>{d}</p></div>
-            ))}</div>
+            <div className="steps">{c.steps.map(([t, d], i) => <div key={t} className="step" style={{ top: `${96 + i * 24}px` }}><span className="n">{i + 1}</span><div><h4>{t}</h4><p>{d}</p></div></div>)}</div>
           </div></section>
           <Contact c={c} />
         </main>
-        <footer><div className="wrap"><span className="logo"><span className="logo-mark" />NEURA</span><span>{c.footer} · 2026</span></div></footer>
+        <footer className="dark"><div className="wrap"><span className="logo"><span className="logo-mark" />NEURA</span><span>{c.footer} · 2026</span></div></footer>
       </div>
     </MotionConfig>
   );
