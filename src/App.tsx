@@ -50,16 +50,18 @@ function Img({ k, alt }: { k: ImgKey; alt: string }) {
 
 const WF: [number, number, number, number, string][] = [[11,3,2.3,4.8,'o'],[14,4.2,8,2,'t'],[34,4.8,5,1.3,'t'],[41,4.8,5,1.3,'t'],[48,4.8,3.5,1.3,'t'],[53,4.8,6.5,1.3,'t'],[60,4.8,5,1.3,'t'],[78,2.2,10.9,5.8,'b'],[11,14,33,8,'t'],[11,24,13,8,'t'],[11,35,29,8,'t'],[11,46,17,8,'t'],[11,60,34,1.6,'t'],[11,64,36,1.6,'t'],[11,68,20,1.6,'t'],[11,75,11,6,'b'],[23.5,75,10.6,6,'b'],[52,10,48,90,'m']];
 function Reveal({ ready }: { ready: boolean }) {
-  const x = useMotionValue(100); const r = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(100); const r = useRef<HTMLDivElement>(null); const drag = useRef(false);
   const clip = useTransform(x, v => `inset(0 ${100 - v}% 0 0)`), left = useTransform(x, v => `${v}%`);
-  useEffect(() => { if (ready) animate(x, 38, { duration: 2.4, delay: 0.8, ease }); }, [ready]);
-  const move = (e: React.PointerEvent) => { const b = r.current!.getBoundingClientRect(); animate(x, Math.min(96, Math.max(4, ((e.clientX - b.left) / b.width) * 100)), { type: 'spring', stiffness: 120, damping: 22 }); };
+  useEffect(() => { if (!ready) return; const a = animate(x, 38, { duration: 2.6, delay: 0.9, ease: [0.65, 0, 0.35, 1] }); return () => a.stop(); }, [ready]);
+  const set = (e: React.PointerEvent) => { const b = r.current!.getBoundingClientRect(); x.set(Math.min(97, Math.max(3, ((e.clientX - b.left) / b.width) * 100))); };
   return (
     <div className="frame"><div className="bar"><i /><i /><i /><span>binhaiauto.ru</span></div>
-      <div className="rv" ref={r} onPointerMove={move} onPointerLeave={() => animate(x, 38, { type: 'spring', stiffness: 60, damping: 20 })}>
+      <div className="rv" ref={r}>
         <Img k="site" alt="binhaiauto.ru" />
         <motion.div className="wf" style={{ clipPath: clip }}>{WF.map(([l, t, w, h, c], i) => <i key={i} className={c} style={{ left: `${l}%`, top: `${t}%`, width: `${w}%`, height: `${h}%` }} />)}</motion.div>
-        <motion.span className="rv-line" style={{ left }} />
+        <motion.span className="rv-line" style={{ left }}
+          onPointerDown={e => { x.stop(); drag.current = true; e.currentTarget.setPointerCapture(e.pointerId); }}
+          onPointerMove={e => drag.current && set(e)} onPointerUp={() => { drag.current = false; }} />
       </div></div>
   );
 }
@@ -81,10 +83,6 @@ function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) =>
 
 function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
   const c = T[lang], r = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = r.current!; const m = (e: PointerEvent) => { const b = el.getBoundingClientRect(); el.style.setProperty('--mx', `${e.clientX - b.left}px`); el.style.setProperty('--my', `${e.clientY - b.top}px`); };
-    el.addEventListener('pointermove', m); return () => el.removeEventListener('pointermove', m);
-  }, []);
   const rise = (d: number) => ({ initial: { opacity: 0, y: 24 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1.1, delay: d, ease } });
   return (
     <section className="hero" ref={r}>
@@ -98,7 +96,7 @@ function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
             <a className="link" href="#work">{c.more}</a>
           </motion.div>
         </div>
-        <motion.div className="hero-art" initial={{ opacity: 0, scale: 0.92 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1.8, delay: 0.3, ease }}><Reveal ready={ready} /></motion.div>
+        <motion.div className="hero-art" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1.4, delay: 0.3, ease }}><Reveal ready={ready} /></motion.div>
       </div>
       <div className="svc">{c.marquee.map(m => <span key={m}>{m}</span>)}</div>
     </section>
