@@ -65,7 +65,7 @@ function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) =>
 
 function HLine({ l, i, ready, sp }: { l: string; i: number; ready: boolean; sp: MotionValue<number> }) {
   const x = useTransform(sp, [-0.5, 0.5], [(i - 1) * 24, (1 - i) * 24]);
-  return <span className="mask"><motion.span className="hl" style={{ x }}><motion.span className="hl" initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></motion.span></span>;
+  return <motion.span className="hl" style={{ x }}><span className="mask"><motion.span className="hl" initial={{ y: '115%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.3, delay: 0.15 + i * 0.13, ease }}>{l}</motion.span></span></motion.span>;
 }
 function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
   const c = T[lang]; const px = useMotionValue(0), sp = useSpring(px, { stiffness: 60, damping: 20 });
