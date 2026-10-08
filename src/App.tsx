@@ -50,6 +50,7 @@ function Img({ k, alt, ar }: { k: ImgKey; alt: string; ar?: string }) {
 
 function Header({ lang, setLang, scrolled }: { lang: Lang; setLang: (l: Lang) => void; scrolled: boolean }) {
   const [open, setOpen] = useState(false); const c = T[lang];
+  useEffect(() => { document.documentElement.classList.toggle('menu-open', open); }, [open]);
   const ids = ['#work', '#studio', '#process', '#contact'];
   return (
     <header className={`hd ${scrolled ? 'solid' : ''} ${open ? 'open' : ''}`}>
@@ -74,7 +75,7 @@ function Hero({ lang, ready }: { lang: Lang; ready: boolean }) {
   const rise = (d: number) => ({ initial: { opacity: 0, y: 24 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1.1, delay: d, ease } });
   return (
     <section className="hero"><div className="wrap">
-      <h1 key={lang}>{c.title.map((l, i) => <HLine key={l} l={l} i={i} ready={ready} sp={sp} amp={24} n={c.title.length} />)}</h1>
+      <h1 key={lang}>{c.title.map((l, i) => <HLine key={l} l={l} i={i} ready={ready} sp={sp} amp={matchMedia('(pointer:coarse)').matches ? 0 : 24} n={c.title.length} />)}</h1>
       <div className="hero-foot">
         <motion.p {...rise(0.8)}>{c.lead}</motion.p>
         <motion.div className="hero-cta" {...rise(1)}><Magnetic><a className="btn" href="#contact">{c.cta}<Arrow /></a></Magnetic><a className="link" href="#work">{c.more}</a></motion.div>
